@@ -11,6 +11,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -19,12 +20,14 @@ import {
 
 import { STATUS } from "@/api/statusApi";
 
-import { deleteCharacter } from "@/api/characterApi";
+import { deleteCharacter, updateCharacter } from "@/api/characterApi";
 
 import kakeraIcon from "@/assets/kakera.webp";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { TrashIcon } from "lucide-react";
 import { MudaeContext } from "@/hooks/mudaeProvider";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function MudaeCard({
   name,
@@ -51,6 +54,12 @@ export default function MudaeCard({
     STATUS[status as keyof typeof STATUS].color
   );
   const [currentStatus, setCurrentStatus] = useState(status);
+
+  const mudaeName = useRef<HTMLInputElement>(null);
+  const mudaeSeries = useRef<HTMLInputElement>(null);
+  const mudaeKakera = useRef<HTMLInputElement>(null);
+  const mudaePicture = useRef<HTMLInputElement>(null);
+
   const { fetchUser } = useContext(MudaeContext);
 
   const handleMudaeCurrentStatus = (status: string) => {
@@ -77,12 +86,35 @@ export default function MudaeCard({
     }
   };
 
+  const handleMudaeUpdate = async (id: string) => {
+    if (fetchUser !== localStorage.getItem("user")) {
+      return;
+    }
+
+    if (
+      mudaeName.current?.value &&
+      mudaeSeries.current?.value &&
+      mudaeKakera.current?.value &&
+      mudaePicture.current?.value
+    ) {
+      await updateCharacter(
+        id,
+        mudaeName.current?.value,
+        mudaeSeries.current?.value,
+        Number(mudaeKakera.current?.value),
+        mudaePicture.current?.value
+      ).then(() => {
+        handleMudaeFetch(fetchUser);
+      });
+    }
+  };
+
   useEffect(() => {
     setCurrentColor(STATUS[currentStatus as keyof typeof STATUS].color);
   }, [currentStatus]);
 
   return (
-    <section className="flex flex-col max-w-[200px] max-h-[415px] p-2 min-w-30 bg-colorSecond border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40">
+    <section className="flex flex-col max-w-[200px] max-h-[450px] p-2 min-w-30 bg-colorSecond border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40">
       <p className="font-extralight text-white/30 h-[25px] w-[25px]">
         {index + 1}.
       </p>
@@ -157,6 +189,58 @@ export default function MudaeCard({
           </AlertDialogContent>
         </AlertDialog>
       </div>
+
+      {fetchUser === localStorage.getItem("user") && (
+        <AlertDialog>
+          <AlertDialogTrigger className="flex items-center justify-center">
+            <Button variant="outline" className="mt-1 w-full">
+              Настроить
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Измените информацию о персонаже
+              </AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogDescription className="flex flex-col gap-2 font-bold">
+              <Input
+                type="text"
+                placeholder="Имя персонажа"
+                defaultValue={name}
+                ref={mudaeName}
+              />
+              <Input
+                type="text"
+                placeholder="Тайтл"
+                defaultValue={series}
+                ref={mudaeSeries}
+              />
+              <Input
+                type="number"
+                placeholder="Какера"
+                defaultValue={kakera}
+                ref={mudaeKakera}
+              />
+              <Input
+                type="text"
+                placeholder="Ссылка на картинку"
+                defaultValue={picture}
+                ref={mudaePicture}
+              />
+            </AlertDialogDescription>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Отмена</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-red-500/50 hover:bg-red-500 text-white"
+                onClick={() => handleMudaeUpdate(id)}
+              >
+                Сохранить
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </section>
   );
 }

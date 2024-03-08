@@ -71,10 +71,28 @@ const updateStatus = async (id: string, status: string) => {
   await pb.collection("mudae_collection").update(id, { status: status });
 };
 
+const updateCharacter = async (
+  id: string,
+  name: string,
+  series: string,
+  kakera: number,
+  picture: string
+) => {
+  const characterData = {
+    name: name,
+    series: series,
+    kakera: kakera,
+    picture: picture,
+  };
+
+  await pb.collection("mudae_collection").update(id, characterData);
+};
+
 export {
   getCharacters,
   getFilteredCharacters,
   addNewCharacter,
   deleteCharacter,
   updateStatus,
+  updateCharacter,
 };
