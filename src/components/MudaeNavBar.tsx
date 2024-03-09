@@ -177,6 +177,7 @@ export default function MudaeNavBar() {
                     <SelectItem value="name">По имени</SelectItem>
                     <SelectItem value="series">По тайтлу </SelectItem>
                     <SelectItem value="kakera">По какере</SelectItem>
+                    <SelectItem value="status">По статусу</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select
