@@ -88,6 +88,19 @@ const updateCharacter = async (
   await pb.collection("mudae_collection").update(id, characterData);
 };
 
+const getCharacterAmount = async (fetchedUser: string) => {
+  const data = await pb
+    .collection("mudae_collection")
+    .getFullList({
+      filter: `owner = "${fetchedUser}"`,
+
+      $autoCancel: false,
+    })
+    .then(res => res);
+
+  return data;
+};
+
 export {
   getCharacters,
   getFilteredCharacters,
@@ -95,4 +108,5 @@ export {
   deleteCharacter,
   updateStatus,
   updateCharacter,
+  getCharacterAmount,
 };

@@ -5,6 +5,7 @@ import {
   Character,
   addNewCharacter,
   updateStatus,
+  getCharacterAmount,
 } from "@/api/characterApi";
 import {
   AlertDialog,
@@ -21,10 +22,17 @@ import MudaeCard from "@/components/mudae_collection/MudaeCard";
 import { PlusIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { MudaeContext } from "@/hooks/mudaeProvider";
+import { getUserKakeraAmount } from "@/api/userApi";
 
 export default function MudaeMain() {
-  const { mudaeFilter, mudaeSort, mudaeSortType, fetchUser } =
-    useContext(MudaeContext);
+  const {
+    mudaeFilter,
+    mudaeSort,
+    mudaeSortType,
+    fetchUser,
+    setKakeraAmount,
+    setCharacterAmount,
+  } = useContext(MudaeContext);
 
   const [characters, setCharacters] = useState<Character[]>([]);
 
@@ -36,10 +44,6 @@ export default function MudaeMain() {
   useEffect(() => {
     handleFilteredFetchData(mudaeFilter, mudaeSort, mudaeSortType, fetchUser);
   }, [mudaeFilter, mudaeSort, mudaeSortType, fetchUser]);
-
-  // useEffect(() => {
-  //   handleFetchData(fetchUser);
-  // }, [fetchUser]);
 
   const handleFetchData = async (fetchUser: string) => {
     try {
@@ -116,6 +120,35 @@ export default function MudaeMain() {
         "MUDAE_KEEP"
       );
       handleFetchData(fetchUser);
+
+      const kakera = await getUserKakeraAmount(fetchUser);
+
+      setKakeraAmount(kakera);
+
+      const character = await getCharacterAmount(fetchUser);
+
+      const mappedCharacters = character.map(record => record.status);
+      const chracterAll = mappedCharacters.length;
+      const characterKeep = mappedCharacters.filter(
+        status => status == "MUDAE_KEEP"
+      ).length;
+      const characterSell = mappedCharacters.filter(
+        status => status == "MUDAE_SELL"
+      ).length;
+      const chracterSellHigher = mappedCharacters.filter(
+        status => status == "MUDAE_SELL_HIGHER"
+      ).length;
+      const characterExchange = mappedCharacters.filter(
+        status => status == "MUDAE_EXCHANGE"
+      ).length;
+
+      setCharacterAmount([
+        chracterAll,
+        characterKeep,
+        characterSell,
+        chracterSellHigher,
+        characterExchange,
+      ]);
     } catch (error) {
       console.error("Error adding character:", error);
     }
@@ -124,6 +157,31 @@ export default function MudaeMain() {
   const handleMudaeStatus = async (id: string, status: string) => {
     try {
       await updateStatus(id, status);
+
+      const character = await getCharacterAmount(fetchUser);
+
+      const mappedCharacters = character.map(record => record.status);
+      const chracterAll = mappedCharacters.length;
+      const characterKeep = mappedCharacters.filter(
+        status => status == "MUDAE_KEEP"
+      ).length;
+      const characterSell = mappedCharacters.filter(
+        status => status == "MUDAE_SELL"
+      ).length;
+      const chracterSellHigher = mappedCharacters.filter(
+        status => status == "MUDAE_SELL_HIGHER"
+      ).length;
+      const characterExchange = mappedCharacters.filter(
+        status => status == "MUDAE_EXCHANGE"
+      ).length;
+
+      setCharacterAmount([
+        chracterAll,
+        characterKeep,
+        characterSell,
+        chracterSellHigher,
+        characterExchange,
+      ]);
     } catch (error) {
       console.error("Error updating status:", error);
     }

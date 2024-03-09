@@ -20,7 +20,11 @@ import {
 
 import { STATUS } from "@/api/statusApi";
 
-import { deleteCharacter, updateCharacter } from "@/api/characterApi";
+import {
+  deleteCharacter,
+  getCharacterAmount,
+  updateCharacter,
+} from "@/api/characterApi";
 
 import kakeraIcon from "@/assets/kakera.webp";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -28,6 +32,7 @@ import { TrashIcon } from "lucide-react";
 import { MudaeContext } from "@/hooks/mudaeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getUserKakeraAmount } from "@/api/userApi";
 
 export default function MudaeCard({
   name,
@@ -60,7 +65,8 @@ export default function MudaeCard({
   const mudaeKakera = useRef<HTMLInputElement>(null);
   const mudaePicture = useRef<HTMLInputElement>(null);
 
-  const { fetchUser } = useContext(MudaeContext);
+  const { fetchUser, setKakeraAmount, setCharacterAmount } =
+    useContext(MudaeContext);
 
   const handleMudaeCurrentStatus = (status: string) => {
     if (fetchUser !== localStorage.getItem("user")) {
@@ -81,6 +87,33 @@ export default function MudaeCard({
       await deleteCharacter(id).then(() => {
         handleMudaeFetch(fetchUser);
       });
+
+      setKakeraAmount(await getUserKakeraAmount(fetchUser));
+
+      const character = await getCharacterAmount(fetchUser);
+
+      const mappedCharacters = character.map(record => record.status);
+      const chracterAll = mappedCharacters.length;
+      const characterKeep = mappedCharacters.filter(
+        status => status == "MUDAE_KEEP"
+      ).length;
+      const characterSell = mappedCharacters.filter(
+        status => status == "MUDAE_SELL"
+      ).length;
+      const chracterSellHigher = mappedCharacters.filter(
+        status => status == "MUDAE_SELL_HIGHER"
+      ).length;
+      const characterExchange = mappedCharacters.filter(
+        status => status == "MUDAE_EXCHANGE"
+      ).length;
+
+      setCharacterAmount([
+        chracterAll,
+        characterKeep,
+        characterSell,
+        chracterSellHigher,
+        characterExchange,
+      ]);
     } catch (error) {
       console.error("Error deleting character:", error);
     }
@@ -103,8 +136,9 @@ export default function MudaeCard({
         mudaeSeries.current?.value,
         Number(mudaeKakera.current?.value),
         mudaePicture.current?.value
-      ).then(() => {
+      ).then(async () => {
         handleMudaeFetch(fetchUser);
+        setKakeraAmount(await getUserKakeraAmount(fetchUser));
       });
     }
   };

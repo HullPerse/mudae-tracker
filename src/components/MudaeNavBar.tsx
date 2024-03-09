@@ -9,12 +9,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MudaeContext } from "@/hooks/mudaeProvider";
-import { createUser, loginUser, getAllUsers, Users } from "@/api/userApi";
-import { Button } from "./ui/button";
+import {
+  createUser,
+  loginUser,
+  getAllUsers,
+  Users,
+  getUserKakeraAmount,
+} from "@/api/userApi";
+
+import { getCharacterAmount } from "@/api/characterApi";
+import { Button } from "@/components/ui/button";
+
+import kakeraIcon from "@/assets/kakera.webp";
 
 export default function MudaeNavBar() {
   const [registration, setRegistration] = useState(false);
   const [usersData, setUsersData] = useState<Users[]>([]);
+  // const [characterAmount, setCharacterAmount] = useState<number[]>([]);
 
   const {
     setMudaeFilter,
@@ -23,6 +34,11 @@ export default function MudaeNavBar() {
     user,
     setUser,
     setFetchUser,
+    fetchUser,
+    kakeraAmount,
+    setKakeraAmount,
+    characterAmount,
+    setCharacterAmount,
   } = useContext(MudaeContext);
 
   const mudaeFilterText = useRef<HTMLInputElement>(null);
@@ -79,6 +95,41 @@ export default function MudaeNavBar() {
   useEffect(() => {
     handleUsersFetch();
   }, []);
+
+  useEffect(() => {
+    const fetchKakera = async () => {
+      const kakera = await getUserKakeraAmount(fetchUser);
+
+      const character = await getCharacterAmount(fetchUser);
+
+      const mappedCharacters = character.map(record => record.status);
+      const chracterAll = mappedCharacters.length;
+      const characterKeep = mappedCharacters.filter(
+        status => status == "MUDAE_KEEP"
+      ).length;
+      const characterSell = mappedCharacters.filter(
+        status => status == "MUDAE_SELL"
+      ).length;
+      const chracterSellHigher = mappedCharacters.filter(
+        status => status == "MUDAE_SELL_HIGHER"
+      ).length;
+      const characterExchange = mappedCharacters.filter(
+        status => status == "MUDAE_EXCHANGE"
+      ).length;
+
+      setCharacterAmount([
+        chracterAll,
+        characterKeep,
+        characterSell,
+        chracterSellHigher,
+        characterExchange,
+      ]);
+
+      setKakeraAmount(kakera);
+    };
+
+    fetchKakera();
+  }, [fetchUser, setKakeraAmount, setCharacterAmount]);
 
   return (
     <nav className="flex flex-col lg:w-[350px] lg:h-[450px]">
@@ -193,6 +244,36 @@ export default function MudaeNavBar() {
                     <SelectItem value="-">По убыванию</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+            <div className="inline-flex items-start justify-between">
+              <div className="mr-2">
+                <ul className="flex flex-col list-decimal ml-4">
+                  <li>
+                    Всего:
+                    <span className="font-bold ml-1">{characterAmount[0]}</span>
+                  </li>
+                  <li>
+                    Оставить:
+                    <span className="font-bold ml-1">{characterAmount[1]}</span>
+                  </li>
+                  <li>
+                    Продать:
+                    <span className="font-bold ml-1">{characterAmount[2]}</span>
+                  </li>
+                  <li>
+                    Продать дорого:
+                    <span className="font-bold ml-1">{characterAmount[3]}</span>
+                  </li>
+                  <li>
+                    На обмен:
+                    <span className="font-bold ml-1">{characterAmount[4]}</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="inline-flex">
+                <span>{kakeraAmount}</span>
+                <img src={kakeraIcon} className="w-6 h-6" />
               </div>
             </div>
           </section>

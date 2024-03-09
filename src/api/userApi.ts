@@ -36,4 +36,22 @@ const getAllUsers = async () => {
   return await pb.collection("users").getFullList();
 };
 
-export { createUser, loginUser, getAllUsers };
+const getUserKakeraAmount = async (user: string) => {
+  const data = await pb
+    .collection("mudae_collection")
+    .getFullList({
+      filter: `owner = "${user}"`,
+      fields: "kakera",
+    })
+    .then(res => res);
+
+  let kakeraValue = 0;
+
+  for (let i = 0; i < data.length; i++) {
+    kakeraValue += data[i].kakera;
+  }
+
+  return kakeraValue;
+};
+
+export { createUser, loginUser, getAllUsers, getUserKakeraAmount };
