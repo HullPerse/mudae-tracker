@@ -14,7 +14,7 @@ export default function MudaeCountdown() {
       const currentMinutes = currentTime.getMinutes();
       const currentSeconds = currentTime.getSeconds();
 
-      let remainingMinutes = 8 - currentMinutes;
+      let remainingMinutes = 57 - currentMinutes;
       let remainingSeconds = 60 - currentSeconds;
 
       if (remainingSeconds < 0) {
