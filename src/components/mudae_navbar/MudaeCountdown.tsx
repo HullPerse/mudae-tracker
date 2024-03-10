@@ -14,7 +14,7 @@ export default function MudaeCountdown() {
       const currentMinutes = currentTime.getMinutes();
       const currentSeconds = currentTime.getSeconds();
 
-      let remainingMinutes = 57 - currentMinutes;
+      let remainingMinutes = 8 - currentMinutes;
       let remainingSeconds = 60 - currentSeconds;
 
       if (remainingSeconds < 0) {
@@ -30,7 +30,7 @@ export default function MudaeCountdown() {
     }, 1000);
 
     return () => clearInterval(interval);
-  });
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -63,9 +63,9 @@ export default function MudaeCountdown() {
         minutes: remainingMinutes,
         seconds: remainingSeconds,
       });
-    });
+    }, 1000);
     return () => clearInterval(interval);
-  });
+  }, []);
 
   return (
     <div className="flex flex-row justify-center items-center gap-x-4">
