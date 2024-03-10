@@ -48,7 +48,7 @@ const addNewCharacter = async (
   name: string,
   series: string,
   kakera: number,
-  picture: string,
+  picture: string[],
   status: string
 ) => {
   const characterData = {

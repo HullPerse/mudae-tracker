@@ -249,23 +249,23 @@ export default function MudaeNavBar() {
             <div className="inline-flex items-start justify-between">
               <div className="mr-2">
                 <ul className="flex flex-col list-decimal ml-4">
-                  <li>
+                  <li key={"all"}>
                     Всего:
                     <span className="font-bold ml-1">{characterAmount[0]}</span>
                   </li>
-                  <li>
+                  <li key={"keep"}>
                     Оставить:
                     <span className="font-bold ml-1">{characterAmount[1]}</span>
                   </li>
-                  <li>
+                  <li key={"sell"}>
                     Продать:
                     <span className="font-bold ml-1">{characterAmount[2]}</span>
                   </li>
-                  <li>
+                  <li key={"sell_higher"}>
                     Продать дорого:
                     <span className="font-bold ml-1">{characterAmount[3]}</span>
                   </li>
-                  <li>
+                  <li key={"exchange"}>
                     На обмен:
                     <span className="font-bold ml-1">{characterAmount[4]}</span>
                   </li>

@@ -18,11 +18,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
 import MudaeCard from "@/components/mudae_collection/MudaeCard";
-import { PlusIcon } from "lucide-react";
+
+import { PlusIcon, TrashIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { MudaeContext } from "@/hooks/mudaeProvider";
 import { getUserKakeraAmount } from "@/api/userApi";
+import { Button } from "@/components/ui/button";
 
 export default function MudaeMain() {
   const {
@@ -36,14 +39,38 @@ export default function MudaeMain() {
 
   const [characters, setCharacters] = useState<Character[]>([]);
 
+  const [pictureArray, setPictureArray] = useState<string[]>([""]);
+
   const mudaeName = useRef<HTMLInputElement>(null);
   const mudaeSeries = useRef<HTMLInputElement>(null);
   const mudaeKakera = useRef<HTMLInputElement>(null);
-  const mudaePicture = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     handleFilteredFetchData(mudaeFilter, mudaeSort, mudaeSortType, fetchUser);
   }, [mudaeFilter, mudaeSort, mudaeSortType, fetchUser]);
+
+  const handleInputChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const values = [...pictureArray];
+    values[index] = event.target.value;
+    setPictureArray(values);
+  };
+
+  const addInputField = () => {
+    if (pictureArray.length >= 5) {
+      return;
+    }
+
+    setPictureArray([...pictureArray, ""]);
+  };
+
+  const removeInputField = (index: number) => {
+    const values = [...pictureArray];
+    values.splice(index, 1);
+    setPictureArray(values);
+  };
 
   const handleFetchData = async (fetchUser: string) => {
     try {
@@ -99,14 +126,8 @@ export default function MudaeMain() {
     const characterName = mudaeName.current?.value || "";
     const characterSeries = mudaeSeries.current?.value || "";
     const characterKakera = mudaeKakera.current?.value || "";
-    const characterPicture = mudaePicture.current?.value || "";
 
-    if (
-      !characterName ||
-      !characterSeries ||
-      !characterKakera ||
-      !characterPicture
-    ) {
+    if (!characterName || !characterSeries || !characterKakera) {
       return;
     }
 
@@ -116,7 +137,7 @@ export default function MudaeMain() {
         characterName,
         characterSeries,
         Number(characterKakera),
-        characterPicture,
+        JSON.parse(JSON.stringify(pictureArray)),
         "MUDAE_KEEP"
       );
       handleFetchData(fetchUser);
@@ -149,6 +170,8 @@ export default function MudaeMain() {
         chracterSellHigher,
         characterExchange,
       ]);
+
+      setPictureArray([""]);
     } catch (error) {
       console.error("Error adding character:", error);
     }
@@ -200,7 +223,7 @@ export default function MudaeMain() {
                 Введите информацию о персонаже
               </AlertDialogTitle>
             </AlertDialogHeader>
-            <AlertDialogDescription className="flex flex-col gap-2 font-bold">
+            <AlertDialogDescription className="flex flex-col gap-2 font-bold overflow-y-auto">
               <Input type="text" placeholder="Имя персонажа" ref={mudaeName} />
               <Input type="text" placeholder="Тайтл" ref={mudaeSeries} />
               <Input
@@ -210,14 +233,43 @@ export default function MudaeMain() {
                 max={9999}
                 ref={mudaeKakera}
               />
-              <Input
-                type="text"
-                placeholder="Ссылка на картинку"
-                ref={mudaePicture}
-              />
+
+              {pictureArray.map((value, index) => (
+                <span key={index} className="inline-flex">
+                  <Input
+                    key={index}
+                    value={value}
+                    type="text"
+                    placeholder="Ссылка на картинку"
+                    className="w-full"
+                    onChange={event => handleInputChange(index, event)}
+                  />
+                  {index > 0 && (
+                    <span
+                      className="flex items-center justify-center w-[40px] h-[40px] ml-1 bg-red-500/50 hover:bg-red-500 rounded font-bold hover:cursor-pointer"
+                      onClick={() => removeInputField(index)}
+                    >
+                      <TrashIcon
+                        color="white"
+                        className="text-white pointer-events-none"
+                      />
+                    </span>
+                  )}
+                </span>
+              ))}
+              <Button
+                variant="outline"
+                onClick={() => addInputField()}
+                disabled={pictureArray.length >= 5}
+              >
+                Добавить картинку
+              </Button>
             </AlertDialogDescription>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-red-500/50 hover:bg-red-500">
+              <AlertDialogCancel
+                className="bg-red-500/50 hover:bg-red-500"
+                onClick={() => setPictureArray([""])}
+              >
                 Отменить
               </AlertDialogCancel>
               <AlertDialogAction
