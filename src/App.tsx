@@ -10,7 +10,10 @@ function App() {
   const { user } = useContext(MudaeContext);
 
   return (
-    <main className="flex lg:flex-row flex-col">
+    <main
+      className="flex lg:flex-row flex-col"
+      onContextMenu={event => event.preventDefault()}
+    >
       <nav className="lg:sticky top-2 lg:w-fit lg:h-fit w-full bg-colorSecond border-2 border-foreground pt-2 lg:mt-2 lg:ml-2 rounded-md">
         <MudaeNavBar />
       </nav>

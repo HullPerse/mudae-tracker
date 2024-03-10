@@ -6,6 +6,7 @@ import {
   addNewCharacter,
   updateStatus,
   getCharacterAmount,
+  deleteCharacter,
 } from "@/api/characterApi";
 import {
   AlertDialog,
@@ -18,6 +19,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 import MudaeCard from "@/components/mudae_collection/MudaeCard";
 
@@ -210,6 +218,47 @@ export default function MudaeMain() {
     }
   };
 
+  const handleMudaeDelete = async (id: string) => {
+    if (fetchUser !== localStorage.getItem("user")) {
+      return;
+    }
+
+    try {
+      await deleteCharacter(id).then(() => {
+        handleFetchData(fetchUser);
+      });
+
+      setKakeraAmount(await getUserKakeraAmount(fetchUser));
+
+      const character = await getCharacterAmount(fetchUser);
+
+      const mappedCharacters = character.map(record => record.status);
+      const chracterAll = mappedCharacters.length;
+      const characterKeep = mappedCharacters.filter(
+        status => status == "MUDAE_KEEP"
+      ).length;
+      const characterSell = mappedCharacters.filter(
+        status => status == "MUDAE_SELL"
+      ).length;
+      const chracterSellHigher = mappedCharacters.filter(
+        status => status == "MUDAE_SELL_HIGHER"
+      ).length;
+      const characterExchange = mappedCharacters.filter(
+        status => status == "MUDAE_EXCHANGE"
+      ).length;
+
+      setCharacterAmount([
+        chracterAll,
+        characterKeep,
+        characterSell,
+        chracterSellHigher,
+        characterExchange,
+      ]);
+    } catch (error) {
+      console.error("Error deleting character:", error);
+    }
+  };
+
   return (
     <section className="flex flex-row flex-wrap items-center p-2 gap-5">
       {fetchUser == localStorage.getItem("user") && (
@@ -286,18 +335,33 @@ export default function MudaeMain() {
       )}
 
       {characters.map((character: Character, index) => (
-        <MudaeCard
-          key={character.id}
-          id={character.id}
-          index={index}
-          name={character.name}
-          series={character.series}
-          kakera={character.kakera}
-          picture={character.picture}
-          status={character.status}
-          handleMudaeFetch={handleFetchData}
-          handleMudaeStatus={handleMudaeStatus}
-        />
+        <ContextMenu key={character.id}>
+          <ContextMenuTrigger>
+            <MudaeCard
+              key={character.id}
+              id={character.id}
+              index={index}
+              name={character.name}
+              series={character.series}
+              kakera={character.kakera}
+              picture={character.picture}
+              status={character.status}
+              handleMudaeFetch={handleFetchData}
+              handleMudaeStatus={handleMudaeStatus}
+            />
+          </ContextMenuTrigger>
+          <ContextMenuContent className="flex flex-col items-center justify-center">
+            <a className="flex items-center justify-center w-full border-b-[2px] border-white/10 mb-2">
+              {character.name}
+            </a>
+            <ContextMenuItem
+              className="flex justify-center w-full bg-red-500/50 hover:bg-red-500 hover:cursor-pointer"
+              onClick={() => handleMudaeDelete(character.id)}
+            >
+              Удалить
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
       ))}
     </section>
   );

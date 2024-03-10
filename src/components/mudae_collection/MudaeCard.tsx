@@ -224,7 +224,7 @@ export default function MudaeCard({
   }, [currentStatus, picture]);
 
   return (
-    <section className="flex flex-col  min-w-[200px] max-w-[200px] min-h-[550px] max-h-[550px] p-2 min-w-30 bg-colorSecond border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40 ">
+    <section className="flex flex-col  min-w-[200px] max-w-[200px] min-h-[550px] max-h-[550px] p-2 min-w-30 bg-colorSecond border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40">
       <div className="inline-flex justify-between z-50">
         <p className="font-extralight text-white/30 h-[25px] w-[25px]">
           {index + 1}.
