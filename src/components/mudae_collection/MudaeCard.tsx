@@ -147,6 +147,8 @@ export default function MudaeCard({
       ).then(async () => {
         handleMudaeFetch(fetchUser);
         setKakeraAmount(await getUserKakeraAmount(fetchUser));
+
+        setPictureArray([""]);
       });
     }
   };
