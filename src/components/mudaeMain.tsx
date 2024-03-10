@@ -240,7 +240,7 @@ export default function MudaeMain() {
                     key={index}
                     value={value}
                     type="text"
-                    placeholder="Ссылка на картинку"
+                    placeholder={`${index == 0 ? "★" : ""} Ссылка на картинку`}
                     className="w-full"
                     onChange={event => handleInputChange(index, event)}
                   />
