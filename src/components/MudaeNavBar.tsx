@@ -32,6 +32,7 @@ import MudaeCountdown from "@/components/mudae_navbar/MudaeCountdown";
 export default function MudaeNavBar() {
   const [registration, setRegistration] = useState(false);
   const [usersData, setUsersData] = useState<Users[]>([]);
+  const [waiting, setWaiting] = useState(false);
 
   const {
     setMudaeFilter,
@@ -77,6 +78,7 @@ export default function MudaeNavBar() {
 
     await createUser(username, password, password).then(async () => {
       setRegistration(false);
+      setWaiting(false);
     });
   };
 
@@ -153,7 +155,19 @@ export default function MudaeNavBar() {
 
       <div className="flex items-center justify-center">
         {!user ? (
-          <section className="flex flex-col w-full mx-2 pt-2 gap-y-1">
+          <form
+            className="flex flex-col w-full mx-2 pt-2 gap-y-1"
+            onSubmit={async e => {
+              e.preventDefault();
+              if (registration) {
+                setWaiting(true);
+                return handleRegistration();
+              }
+
+              handleLogin();
+              setWaiting(true);
+            }}
+          >
             <Input
               type="text"
               placeholder="Имя пользователя"
@@ -165,11 +179,19 @@ export default function MudaeNavBar() {
               ref={mudaePasswordLogin}
             />
             {registration ? (
-              <Button variant={"secondary"} onClick={handleRegistration}>
+              <Button
+                variant={"secondary"}
+                onClick={handleRegistration}
+                disabled={waiting}
+              >
                 Зарегистрироваться
               </Button>
             ) : (
-              <Button variant={"secondary"} onClick={handleLogin}>
+              <Button
+                variant={"secondary"}
+                onClick={handleLogin}
+                disabled={waiting}
+              >
                 Войти
               </Button>
             )}
@@ -197,7 +219,7 @@ export default function MudaeNavBar() {
                 </HoverCard>
               )}
             </div>
-          </section>
+          </form>
         ) : (
           <section className="flex flex-col px-2 py-4 gap-y-1 w-full">
             <div className="inline-flex">
@@ -207,12 +229,15 @@ export default function MudaeNavBar() {
                 }}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={user} defaultValue={user} />
+                  <SelectValue
+                    placeholder="Выберите пользователя"
+                    defaultValue={user.toUpperCase()}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {usersData.map((user, index) => (
                     <SelectItem key={index} value={user.username}>
-                      {user.username}
+                      {user.username.toUpperCase()}
                     </SelectItem>
                   ))}
                 </SelectContent>
