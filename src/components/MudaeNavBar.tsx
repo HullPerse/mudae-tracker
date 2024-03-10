@@ -6,6 +6,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
 import { Input } from "@/components/ui/input";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MudaeContext } from "@/hooks/mudaeProvider";
@@ -134,7 +140,16 @@ export default function MudaeNavBar() {
   return (
     <nav className="flex flex-col lg:w-[350px] lg:h-[450px]">
       <h1 className="text-base font-bold  text-center">MUDAE TRACKER</h1>
-      <a className="text-base text-center">By: @hullperse</a>
+      <span className="flex items-center justify-center w-full text-base text-center gap-x-2">
+        <span>By:</span>
+        <a
+          className="hover:underline hover:cursor-pointer"
+          href="https://github.com/hullperse"
+          target="_blank"
+        >
+          @hullperse
+        </a>
+      </span>
 
       <div className="flex items-center justify-center">
         {!user ? (
@@ -159,7 +174,7 @@ export default function MudaeNavBar() {
               </Button>
             )}
 
-            <div className="flex justify-end">
+            <div className="flex flex-row-reverse justify-between">
               <a
                 className="hover:cursor-pointer hover:underline"
                 onClick={() => {
@@ -168,6 +183,19 @@ export default function MudaeNavBar() {
               >
                 {registration ? "Войти" : "Зарегистрироваться"}
               </a>
+              {registration && (
+                <HoverCard>
+                  <HoverCardTrigger className="hover:cursor-pointer hover:underline">
+                    Требования
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-full">
+                    <ul className="list-disc list-inside">
+                      <li>Имя пользователя не должно содержать пробелов</li>
+                      <li>Пароль должен иметь минимум 8 символов</li>
+                    </ul>
+                  </HoverCardContent>
+                </HoverCard>
+              )}
             </div>
           </section>
         ) : (
