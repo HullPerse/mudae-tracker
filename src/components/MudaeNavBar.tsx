@@ -21,11 +21,11 @@ import { getCharacterAmount } from "@/api/characterApi";
 import { Button } from "@/components/ui/button";
 
 import kakeraIcon from "@/assets/kakera.webp";
+import MudaeCountdown from "@/components/mudae_navbar/MudaeCountdown";
 
 export default function MudaeNavBar() {
   const [registration, setRegistration] = useState(false);
   const [usersData, setUsersData] = useState<Users[]>([]);
-  // const [characterAmount, setCharacterAmount] = useState<number[]>([]);
 
   const {
     setMudaeFilter,
@@ -275,6 +275,9 @@ export default function MudaeNavBar() {
                 <span>{kakeraAmount}</span>
                 <img src={kakeraIcon} className="w-6 h-6" />
               </div>
+            </div>
+            <div className="flex items-center justify-between ">
+              <MudaeCountdown />
             </div>
           </section>
         )}

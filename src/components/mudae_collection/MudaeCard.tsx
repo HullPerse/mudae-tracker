@@ -133,6 +133,23 @@ export default function MudaeCard({
       return;
     }
 
+    pictureArray.forEach((element, index) => {
+      if (!element) {
+        pictureArray[index] = JSON.stringify(picture)
+          .replace(/"/g, "")
+          .replace("[", "")
+          .replace("]", "")
+          .replace(" ", "")
+          .split(",")[index];
+      }
+    });
+
+    pictureArray.forEach((element, index) => {
+      if (element == " ") {
+        pictureArray.splice(index, 1);
+      }
+    });
+
     if (
       mudaeName.current?.value &&
       mudaeSeries.current?.value &&
@@ -147,7 +164,6 @@ export default function MudaeCard({
       ).then(async () => {
         handleMudaeFetch(fetchUser);
         setKakeraAmount(await getUserKakeraAmount(fetchUser));
-
         setPictureArray([""]);
       });
     }
@@ -195,7 +211,7 @@ export default function MudaeCard({
   }, [currentStatus, picture]);
 
   return (
-    <section className="flex flex-col  min-w-[200px] max-w-[200px] min-h-[500px] max-h-auto p-2 min-w-30 bg-colorSecond border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40 ">
+    <section className="flex flex-col  min-w-[200px] max-w-[200px] min-h-[550px] max-h-[550px] p-2 min-w-30 bg-colorSecond border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40 ">
       <div className="inline-flex justify-between z-50">
         <p className="font-extralight text-white/30 h-[25px] w-[25px]">
           {index + 1}.
@@ -206,21 +222,17 @@ export default function MudaeCard({
         <CarouselContent>
           {photoArray.map((picture, index) => (
             <CarouselItem key={index}>
-              <div className="flex w-[100%] h-[100%] object-cover overflow-hidden">
-                <img
-                  src={picture}
-                  loading="lazy"
-                  className="rounded max-h-auto"
-                />
+              <div className="flex w-full h-[280px] justify-center border-[1px] border-white rounded">
+                <img src={picture} loading="lazy" className="rounded" />
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
 
         <div className="absolute -top-7 right-0 h-[20px] mr-2 z-50">
-          <CarouselPrevious className="flex items-center justify-center bg-red-500 h-[25px] w-[25px]" />
+          <CarouselPrevious className="flex items-center justify-center h-[25px] w-[25px]" />
 
-          <CarouselNext className="flex items-center justify-center bg-green-500 h-[25px] w-[25px]" />
+          <CarouselNext className="flex items-center justify-center h-[25px] w-[25px]" />
         </div>
 
         <h2 className="font-extrabold pt-1">{name}</h2>
