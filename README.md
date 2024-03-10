@@ -1,3 +1,6 @@
 # mudae-tracker
 
-a
+TO-DO:
+1. add english language
+2. add light theme
+
