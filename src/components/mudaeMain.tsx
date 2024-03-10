@@ -1,4 +1,10 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  Suspense,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   getCharacters,
   getFilteredCharacters,
@@ -27,13 +33,17 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
-import MudaeCard from "@/components/mudae_collection/MudaeCard";
+// import MudaeCard from "@/components/mudae_collection/MudaeCard";
+const MudaeCard = React.lazy(
+  () => import("@/components/mudae_collection/MudaeCard")
+);
 
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { MudaeContext } from "@/hooks/mudaeProvider";
 import { getUserKakeraAmount } from "@/api/userApi";
 import { Button } from "@/components/ui/button";
+import { Oval } from "react-loader-spinner";
 
 export default function MudaeMain() {
   const {
@@ -337,18 +347,24 @@ export default function MudaeMain() {
       {characters.map((character: Character, index) => (
         <ContextMenu key={character.id}>
           <ContextMenuTrigger>
-            <MudaeCard
-              key={character.id}
-              id={character.id}
-              index={index}
-              name={character.name}
-              series={character.series}
-              kakera={character.kakera}
-              picture={character.picture}
-              status={character.status}
-              handleMudaeFetch={handleFetchData}
-              handleMudaeStatus={handleMudaeStatus}
-            />
+            <Suspense
+              fallback={
+                <Oval color="white" height={80} width={80} visible={true} />
+              }
+            >
+              <MudaeCard
+                key={character.id}
+                id={character.id}
+                index={index}
+                name={character.name}
+                series={character.series}
+                kakera={character.kakera}
+                picture={character.picture}
+                status={character.status}
+                handleMudaeFetch={handleFetchData}
+                handleMudaeStatus={handleMudaeStatus}
+              />
+            </Suspense>
           </ContextMenuTrigger>
           <ContextMenuContent className="flex flex-col items-center justify-center">
             <a className="flex items-center justify-center w-full border-b-[2px] border-white/10 mb-2">
