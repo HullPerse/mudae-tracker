@@ -15,11 +15,11 @@ export default function MudaeCountdown() {
       const currentSeconds = currentTime.getSeconds();
 
       let remainingMinutes = 57 - currentMinutes;
-      let remainingSeconds = 60 - currentSeconds;
+      let remainingSeconds = 59 - currentSeconds;
 
       if (remainingSeconds < 0) {
         remainingMinutes -= 1;
-        remainingSeconds = 60 + remainingSeconds;
+        remainingSeconds = 59 + remainingSeconds;
       }
 
       if (remainingMinutes < 0) {
@@ -40,18 +40,18 @@ export default function MudaeCountdown() {
 
       let remainingHours = 4 - currentTime.getHours();
       let remainingMinutes = 57 - currentMinutes;
-      let remainingSeconds = 60 - currentSeconds;
+      let remainingSeconds = 59 - currentSeconds;
 
       if (remainingHours < 0) {
         remainingHours = 0;
         remainingMinutes = 57 - currentMinutes;
-        remainingSeconds = 60 - currentSeconds;
+        remainingSeconds = 59 - currentSeconds;
       }
 
       if (remainingSeconds < 0) {
         remainingHours -= 1;
         remainingMinutes -= 1;
-        remainingSeconds = 60 + remainingSeconds;
+        remainingSeconds = 59 + remainingSeconds;
       }
 
       if (remainingMinutes < 0) {
