@@ -276,7 +276,7 @@ export default function MudaeNavBar() {
                 <img src={kakeraIcon} className="w-6 h-6" />
               </div>
             </div>
-            <div className="flex items-center justify-between ">
+            <div className="flex items-center justify-center">
               <MudaeCountdown />
             </div>
           </section>

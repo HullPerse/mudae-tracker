@@ -28,8 +28,8 @@ export default function MudaeCountdown() {
   });
 
   return (
-    <div>
-      <h1 className="font-bold">Роллы: </h1>
+    <div className="flex flex-col justify-center items-center">
+      <h1 className="font-bold">Время до роллов: </h1>
       <p>{`${time.minutes.toString().padStart(2, "0")}:${time.seconds
         .toString()
         .padStart(2, "0")}`}</p>
