@@ -33,7 +33,6 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
-// import MudaeCard from "@/components/mudae_collection/MudaeCard";
 const MudaeCard = React.lazy(
   () => import("@/components/mudae_collection/MudaeCard")
 );

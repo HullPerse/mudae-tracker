@@ -40,7 +40,10 @@ import { TrashIcon } from "lucide-react";
 import { MudaeContext } from "@/hooks/mudaeProvider";
 import { Input } from "@/components/ui/input";
 import { getUserKakeraAmount } from "@/api/userApi";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 export default function MudaeCard({
   name,
@@ -236,9 +239,10 @@ export default function MudaeCard({
           {photoArray.map((picture, index) => (
             <CarouselItem key={index}>
               <div className="flex w-full h-[280px] justify-center border-[1px] border-white rounded">
-                <img
+                <LazyLoadImage
                   src={picture}
-                  loading="lazy"
+                  placeholderSrc={"placeholder.png"}
+                  effect="blur"
                   className="rounded object-contain"
                 />
               </div>
