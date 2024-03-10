@@ -236,7 +236,11 @@ export default function MudaeCard({
           {photoArray.map((picture, index) => (
             <CarouselItem key={index}>
               <div className="flex w-full h-[280px] justify-center border-[1px] border-white rounded">
-                <img src={picture} loading="lazy" className="rounded" />
+                <img
+                  src={picture}
+                  loading="lazy"
+                  className="rounded object-contain"
+                />
               </div>
             </CarouselItem>
           ))}
