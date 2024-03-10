@@ -77,6 +77,19 @@ export default function MudaeCard({
   const { fetchUser, setKakeraAmount, setCharacterAmount } =
     useContext(MudaeContext);
 
+  const getInputAmount = async () => {
+    const data = JSON.stringify(picture)
+      .replace(/"/g, "")
+      .replace("[", "")
+      .replace("]", "")
+      .replace(" ", "")
+      .split(",").length;
+
+    const newArray = new Array(data).fill("");
+
+    setPictureArray(newArray);
+  };
+
   const handleMudaeCurrentStatus = (status: string) => {
     if (fetchUser !== localStorage.getItem("user")) {
       return;
@@ -307,7 +320,10 @@ export default function MudaeCard({
         {fetchUser === localStorage.getItem("user") && (
           <AlertDialog>
             <AlertDialogTrigger className="flex items-center justify-center">
-              <span className="border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-1 w-full h-10 px-4 py-2">
+              <span
+                className="border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-1 w-full h-10 px-4 py-2"
+                onClick={() => getInputAmount()}
+              >
                 Настроить
               </span>
             </AlertDialogTrigger>
