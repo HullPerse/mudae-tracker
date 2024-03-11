@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react";
 
 export default function MudaeCountdown() {
-  const [time, setTime] = useState({ minutes: 0, seconds: 0 });
-  const [resetTime, setResetTime] = useState({
+  const [time, setTime] = useState<{ minutes: number; seconds: number }>({
+    minutes: 0,
+    seconds: 0,
+  });
+  const [resetTime, setResetTime] = useState<{
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>({
     hours: 0,
     minutes: 0,
     seconds: 0,
@@ -26,7 +33,10 @@ export default function MudaeCountdown() {
         remainingMinutes = 57;
       }
 
-      setTime({ minutes: remainingMinutes, seconds: remainingSeconds });
+      setTime({
+        minutes: remainingMinutes,
+        seconds: remainingSeconds,
+      });
     }, 1000);
 
     return () => clearInterval(interval);
@@ -34,29 +44,41 @@ export default function MudaeCountdown() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const currentTime = new Date();
-      const currentMinutes = currentTime.getMinutes();
-      const currentSeconds = currentTime.getSeconds();
+      const moscowTime = new Date().toLocaleString("en-US", {
+        timeZone: "Europe/Moscow",
+      });
+      const currentTime = new Date(moscowTime);
+      const currentHour = currentTime.getHours();
 
-      let remainingHours = 4 - currentTime.getHours();
-      let remainingMinutes = 57 - currentMinutes;
-      let remainingSeconds = 59 - currentSeconds;
+      const targetHours = [1, 5, 9, 13, 17, 21];
 
-      if (remainingHours < 0) {
-        remainingHours = 0;
-        remainingMinutes = 57 - currentMinutes;
-        remainingSeconds = 59 - currentSeconds;
+      let nextTargetIndex = 0;
+      for (let i = 0; i < targetHours.length; i++) {
+        if (currentHour < targetHours[i]) {
+          nextTargetIndex = i;
+          break;
+        }
       }
 
-      if (remainingSeconds < 0) {
-        remainingHours -= 1;
-        remainingMinutes -= 1;
-        remainingSeconds = 59 + remainingSeconds;
+      const targetHour = targetHours[nextTargetIndex];
+      const targetTime = new Date(currentTime);
+      targetTime.setHours(targetHour, 0, 0, 0);
+
+      let remainingMilliseconds = targetTime.getTime() - currentTime.getTime();
+      if (remainingMilliseconds < 0) {
+        targetTime.setDate(targetTime.getDate() + 1);
+        remainingMilliseconds = targetTime.getTime() - currentTime.getTime();
       }
 
-      if (remainingMinutes < 0) {
-        remainingMinutes = 57;
-      }
+      const remainingHours = Math.floor(
+        remainingMilliseconds / (1000 * 60 * 60)
+      );
+      const remainingMinutes = Math.floor(
+        (remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+      );
+      const remainingSeconds = Math.floor(
+        (remainingMilliseconds % (1000 * 60)) / 1000
+      );
 
       setResetTime({
         hours: remainingHours,
@@ -71,17 +93,21 @@ export default function MudaeCountdown() {
     <div className="flex flex-row justify-center items-center gap-x-4">
       <div className="flex flex-col items-center justify-center">
         <h1 className="font-bold">Время до роллов: </h1>
-        <p>{`${time.minutes.toString().padStart(2, "0")}:${time.seconds
-          .toString()
-          .padStart(2, "0")}`}</p>
+        <p>
+          {time.minutes
+            ? `${time.minutes.toString().padStart(2, "0")}:${time.seconds
+                .toString()
+                .padStart(2, "0")}`
+            : "00:00"}
+        </p>
       </div>
       <div className="flex flex-col items-center justify-center">
         <h1 className="font-bold">Время до клейма: </h1>
-        <p>{`${resetTime.hours.toString()}:${resetTime.minutes
-          .toString()
-          .padStart(2, "0")}:${resetTime.seconds
-          .toString()
-          .padStart(2, "0")}`}</p>
+        <p>
+          {resetTime.hours.toString()}:
+          {resetTime.minutes.toString().padStart(2, "0")}:
+          {resetTime.seconds.toString().padStart(2, "0")}
+        </p>
       </div>
     </div>
   );
