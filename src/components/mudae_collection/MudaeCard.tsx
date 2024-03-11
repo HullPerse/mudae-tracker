@@ -125,9 +125,6 @@ export default function MudaeCard({
       const characterSell = mappedCharacters.filter(
         status => status == "MUDAE_SELL"
       ).length;
-      const chracterSellHigher = mappedCharacters.filter(
-        status => status == "MUDAE_SELL_HIGHER"
-      ).length;
       const characterExchange = mappedCharacters.filter(
         status => status == "MUDAE_EXCHANGE"
       ).length;
@@ -136,7 +133,6 @@ export default function MudaeCard({
         chracterAll,
         characterKeep,
         characterSell,
-        chracterSellHigher,
         characterExchange,
       ]);
     } catch (error) {
@@ -291,9 +287,6 @@ export default function MudaeCard({
               </SelectItem>
               <SelectItem value={"MUDAE_SELL"}>
                 {STATUS.MUDAE_SELL.name}
-              </SelectItem>
-              <SelectItem value={"MUDAE_SELL_HIGHER"}>
-                {STATUS.MUDAE_SELL_HIGHER.name}
               </SelectItem>
               <SelectItem value={"MUDAE_EXCHANGE"}>
                 {STATUS.MUDAE_EXCHANGE.name}

@@ -314,10 +314,6 @@ export default function MudaeNavBar() {
                     Продать:
                     <span className="font-bold ml-1">{characterAmount[2]}</span>
                   </li>
-                  <li key={"sell_higher"}>
-                    Продать дорого:
-                    <span className="font-bold ml-1">{characterAmount[3]}</span>
-                  </li>
                   <li key={"exchange"}>
                     На обмен:
                     <span className="font-bold ml-1">{characterAmount[4]}</span>

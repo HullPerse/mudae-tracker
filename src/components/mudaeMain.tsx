@@ -42,7 +42,7 @@ import { Input } from "@/components/ui/input";
 import { MudaeContext } from "@/hooks/mudaeProvider";
 import { getUserKakeraAmount } from "@/api/userApi";
 import { Button } from "@/components/ui/button";
-import { Oval } from "react-loader-spinner";
+import { ClipLoader } from "react-spinners";
 
 export default function MudaeMain() {
   const {
@@ -347,9 +347,7 @@ export default function MudaeMain() {
         <ContextMenu key={character.id}>
           <ContextMenuTrigger>
             <Suspense
-              fallback={
-                <Oval color="white" height={80} width={80} visible={true} />
-              }
+              fallback={<ClipLoader color="#434343" loading size={40} />}
             >
               <MudaeCard
                 key={character.id}
