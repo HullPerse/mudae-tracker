@@ -60,12 +60,16 @@ export default function MudaeNavBar() {
       return;
     }
 
-    await loginUser(username, password).then(() => {
-      setFetchUser(username);
-      setUser(username);
+    try {
+      await loginUser(username, password).then(() => {
+        setFetchUser(username);
+        setUser(username);
 
-      window.location.reload();
-    });
+        window.location.reload();
+      });
+    } catch (error) {
+      setWaiting(false);
+    }
   };
 
   const handleRegistration = async () => {
@@ -76,10 +80,14 @@ export default function MudaeNavBar() {
       return;
     }
 
-    await createUser(username, password, password).then(async () => {
-      setRegistration(false);
+    try {
+      await createUser(username, password, password).then(async () => {
+        setRegistration(false);
+        setWaiting(false);
+      });
+    } catch (error) {
       setWaiting(false);
-    });
+    }
   };
 
   const handleLogout = async () => {
