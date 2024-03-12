@@ -35,6 +35,8 @@ export default function MudaeForm() {
         await loginUser(username, password).then(() => {
           localStorage.setItem("user", username);
           setUser(username);
+
+          window.location.reload();
         });
       });
     }
