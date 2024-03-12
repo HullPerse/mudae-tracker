@@ -27,14 +27,14 @@ export default function MudaeForm() {
 
     if (login) {
       await loginUser(username, password).then(() => {
-        localStorage.setItem("user", username);
+        localStorage.setItem("user", username.toLowerCase());
         setUser(username.toLowerCase());
         setFetchedUser(username.toLowerCase());
       });
     } else {
       await createUser(username, password).then(async () => {
         await loginUser(username, password).then(() => {
-          localStorage.setItem("user", username);
+          localStorage.setItem("user", username.toLowerCase());
           setUser(username.toLowerCase());
           setFetchedUser(username.toLowerCase());
         });
