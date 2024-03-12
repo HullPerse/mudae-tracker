@@ -1,3 +1,13 @@
+import { useContext, useEffect, useRef, useState } from "react";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
 import {
   Select,
   SelectContent,
@@ -19,66 +29,66 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-
-import { STATUS } from "@/api/statusApi";
-
-import {
   deleteCharacter,
-  getCharacterAmount,
   updateCharacter,
-} from "@/api/characterApi";
+  updateStatus,
+} from "@/api/character_api";
 
-import kakeraIcon from "@/assets/kakera.webp";
-import { useContext, useEffect, useRef, useState } from "react";
-import { TrashIcon } from "lucide-react";
-import { MudaeContext } from "@/hooks/mudaeProvider";
-import { Input } from "@/components/ui/input";
-import { getUserKakeraAmount } from "@/api/userApi";
-import { Button } from "@/components/ui/button";
+import KakeraIcon from "@/assets/kakera.webp";
+import Placeholder from "@/assets/placeholder.png";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import { MudaeContext } from "@/components/providers/userProvider";
+import { STATUS } from "@/api/status_api";
+import { TrashIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+interface Character {
+  id: string;
+  name: string;
+  kakera: number;
+  picture: string;
+  series: string;
+  status: string;
+}
 
 export default function MudaeCard({
   name,
-  index,
   id,
   series,
   kakera,
   picture,
   status,
-  handleMudaeFetch,
-  handleMudaeStatus,
+  index,
+  getEvents,
+  handleEvents,
 }: {
-  name: string;
   id: string;
-  index: number;
+  name: string;
   series: string;
   kakera: number;
   picture: string;
   status: string;
-  handleMudaeFetch: (fetchUser: string) => Promise<void>;
-  handleMudaeStatus: (id: string, status: string) => void;
+  index: number;
+  getEvents: Character[];
+  handleEvents: (data: Character[]) => void;
 }) {
+  const { fetchedUser, setCharacterDataArray, setKakera } =
+    useContext(MudaeContext);
+
+  const [imageArray, setImageArray] = useState<string[]>([]);
+  const [pictureArray, setPictureArray] = useState<string[]>([]);
+
+  const [currentStatus, setCurrentStatus] = useState(status);
   const [currentColor, setCurrentColor] = useState(
     STATUS[status as keyof typeof STATUS].color
   );
-  const [currentStatus, setCurrentStatus] = useState(status);
-  const [photoArray, setPhotoArray] = useState<string[]>([]);
-  const [pictureArray, setPictureArray] = useState<string[]>([""]);
 
   const mudaeName = useRef<HTMLInputElement>(null);
   const mudaeSeries = useRef<HTMLInputElement>(null);
   const mudaeKakera = useRef<HTMLInputElement>(null);
-
-  const { fetchUser, setKakeraAmount, setCharacterAmount } =
-    useContext(MudaeContext);
 
   const getInputAmount = async () => {
     const data = JSON.stringify(picture)
@@ -90,11 +100,11 @@ export default function MudaeCard({
 
     const newArray = new Array(data).fill("");
 
-    setPictureArray(newArray);
+    setImageArray(newArray);
   };
 
   const handleMudaeCurrentStatus = (status: string) => {
-    if (fetchUser !== localStorage.getItem("user")) {
+    if (fetchedUser !== localStorage.getItem("user")) {
       return;
     }
 
@@ -103,51 +113,35 @@ export default function MudaeCard({
     handleMudaeStatus(id, status);
   };
 
+  const handleMudaeStatus = async (id: string, status: string) => {
+    try {
+      await updateStatus(id, status);
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
   const handleMudaeDelete = async (id: string) => {
-    if (fetchUser !== localStorage.getItem("user")) {
+    if (fetchedUser !== localStorage.getItem("user")) {
       return;
     }
 
-    try {
-      await deleteCharacter(id).then(() => {
-        handleMudaeFetch(fetchUser);
-      });
+    await deleteCharacter(id).then(() => {
+      const newData = getEvents.filter(
+        item => item.id !== id
+      ) as unknown as CharacterData[];
 
-      setKakeraAmount(await getUserKakeraAmount(fetchUser));
-
-      const character = await getCharacterAmount(fetchUser);
-
-      const mappedCharacters = character.map(record => record.status);
-      const chracterAll = mappedCharacters.length;
-      const characterKeep = mappedCharacters.filter(
-        status => status == "MUDAE_KEEP"
-      ).length;
-      const characterSell = mappedCharacters.filter(
-        status => status == "MUDAE_SELL"
-      ).length;
-      const characterExchange = mappedCharacters.filter(
-        status => status == "MUDAE_EXCHANGE"
-      ).length;
-
-      setCharacterAmount([
-        chracterAll,
-        characterKeep,
-        characterSell,
-        characterExchange,
-      ]);
-    } catch (error) {
-      console.error("Error deleting character:", error);
-    }
+      handleEvents(newData as unknown as Character[]);
+    });
   };
 
   const handleMudaeUpdate = async (id: string) => {
-    if (fetchUser !== localStorage.getItem("user")) {
+    if (fetchedUser !== localStorage.getItem("user")) {
       return;
     }
 
-    pictureArray.forEach((element, index) => {
+    imageArray.forEach((element, index) => {
       if (!element) {
-        pictureArray[index] = JSON.stringify(picture)
+        imageArray[index] = JSON.stringify(picture)
           .replace(/"/g, "")
           .replace("[", "")
           .replace("]", "")
@@ -156,52 +150,79 @@ export default function MudaeCard({
       }
     });
 
-    pictureArray.forEach((element, index) => {
+    imageArray.forEach((element, index) => {
       if (element == " ") {
-        pictureArray.splice(index, 1);
+        imageArray.splice(index, 1);
       }
     });
 
-    if (
-      mudaeName.current?.value &&
-      mudaeSeries.current?.value &&
-      mudaeKakera.current?.value
-    ) {
+    const characterName = mudaeName.current?.value;
+    const characterSeries = mudaeSeries.current?.value;
+    const characterKakera = Number(mudaeKakera.current?.value);
+
+    if (characterName && characterSeries && characterKakera) {
       await updateCharacter(
         id,
-        mudaeName.current?.value,
-        mudaeSeries.current?.value,
-        Number(mudaeKakera.current?.value),
-        JSON.parse(JSON.stringify(pictureArray))
-      ).then(async () => {
-        handleMudaeFetch(fetchUser);
-        setKakeraAmount(await getUserKakeraAmount(fetchUser));
-        setPictureArray([""]);
+        characterName,
+        characterSeries,
+        characterKakera,
+        JSON.parse(JSON.stringify(imageArray))
+      ).then(data => {
+        const newData = getEvents.filter(item => item.id == id);
+
+        newData[0].name = data.name;
+        newData[0].series = data.series;
+        newData[0].kakera = data.kakera;
+        newData[0].picture = data.picture;
+
+        const findIndex = getEvents.findIndex(item => item.id == id);
+
+        getEvents[findIndex] = newData[0];
+
+        setCharacterDataArray([...getEvents]);
+
+        const getKakeraAmount = () => {
+          let kakeraValue = 0;
+
+          for (let i = 0; i < getEvents.length; i++) {
+            kakeraValue += getEvents[i].kakera;
+          }
+
+          return kakeraValue;
+        };
+
+        setKakera(getKakeraAmount());
+
+        // handleEvents(newData as unknown as Character[]);
       });
     }
+
+    setImageArray([""]);
+    // setKakeraAmount(await getUserKakeraAmount(fetchedUser));
   };
 
   const handleInputChange = (
-    index: number,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
   ) => {
-    const values = [...pictureArray];
+    const values = [...imageArray];
     values[index] = event.target.value;
-    setPictureArray(values);
+
+    setImageArray(values);
   };
 
   const addInputField = () => {
-    if (pictureArray.length >= 5) {
+    if (imageArray.length >= 5) {
       return;
     }
 
-    setPictureArray([...pictureArray, ""]);
+    setImageArray([...imageArray, ""]);
   };
 
   const removeInputField = (index: number) => {
-    const values = [...pictureArray];
+    const values = [...imageArray];
     values.splice(index, 1);
-    setPictureArray(values);
+    setImageArray(values);
   };
 
   useEffect(() => {
@@ -219,25 +240,25 @@ export default function MudaeCard({
         pictureStringArray.push(element);
       });
 
-    setPhotoArray(pictureStringArray);
+    setPictureArray(pictureStringArray);
   }, [currentStatus, picture]);
 
   return (
-    <section className="flex flex-col  min-w-[200px] max-w-[200px] min-h-[550px] max-h-[550px] p-2 min-w-30 bg-colorSecond border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40">
+    <div className="flex flex-col min-w-[200px] max-w-[200px] min-h-[550px] max-h-[550px] p-2 min-w-30 bg-accent border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40">
       <div className="inline-flex justify-between z-50">
-        <p className="font-extralight text-white/30 h-[25px] w-[25px]">
+        <p className="font-extralight text-accent-foreground h-[25px] w-[25px]">
           {index + 1}.
         </p>
       </div>
 
       <Carousel>
         <CarouselContent>
-          {photoArray.map((picture, index) => (
+          {pictureArray.map((picture, index) => (
             <CarouselItem key={index}>
               <div className="flex w-full h-[280px] justify-center border-[1px] border-white rounded">
                 <LazyLoadImage
                   src={picture}
-                  placeholderSrc={"placeholder.png"}
+                  placeholderSrc={Placeholder}
                   effect="blur"
                   className="rounded object-contain"
                 />
@@ -257,11 +278,12 @@ export default function MudaeCard({
         <div className="inline-flex">
           <p className="font-bold">{kakera}</p>
           <img
-            src={kakeraIcon}
+            src={KakeraIcon}
             height={20}
             width={20}
             className="pb-1"
             loading="lazy"
+            draggable="false"
           />
         </div>
       </Carousel>
@@ -270,7 +292,7 @@ export default function MudaeCard({
           <Select onValueChange={handleMudaeCurrentStatus}>
             <SelectTrigger
               className={`${
-                fetchUser === localStorage.getItem("user")
+                fetchedUser === localStorage.getItem("user")
                   ? "w-[80%]"
                   : "w-full"
               } font-bold`}
@@ -293,7 +315,7 @@ export default function MudaeCard({
               </SelectItem>
             </SelectContent>
           </Select>
-          {fetchUser === localStorage.getItem("user") && (
+          {fetchedUser === localStorage.getItem("user") && (
             <AlertDialog>
               <AlertDialogTrigger className="text-center bg-red-500/50 hover:bg-red-500/30 p-2 ml-2 rounded-md items-end justify-evenly hover:cursor-pointer">
                 <TrashIcon size={24} />
@@ -318,7 +340,7 @@ export default function MudaeCard({
           )}
         </div>
 
-        {fetchUser === localStorage.getItem("user") && (
+        {fetchedUser === localStorage.getItem("user") && (
           <AlertDialog>
             <AlertDialogTrigger className="flex items-center justify-center">
               <span
@@ -354,15 +376,15 @@ export default function MudaeCard({
                   ref={mudaeKakera}
                 />
 
-                {pictureArray.map((value, index) => (
+                {imageArray.map((value, index) => (
                   <span key={index} className="inline-flex">
                     <Input
                       key={index}
-                      value={value}
                       type="text"
-                      placeholder={photoArray[index]}
+                      placeholder={value}
+                      value={pictureArray[index]}
                       className="w-full"
-                      onChange={event => handleInputChange(index, event)}
+                      onChange={event => handleInputChange(event, index)}
                     />
                     {index > 0 && (
                       <span
@@ -380,7 +402,7 @@ export default function MudaeCard({
                 <Button
                   variant="outline"
                   onClick={() => addInputField()}
-                  disabled={pictureArray.length >= 5}
+                  disabled={imageArray.length >= 5}
                 >
                   Добавить картинку
                 </Button>
@@ -398,6 +420,6 @@ export default function MudaeCard({
           </AlertDialog>
         )}
       </section>
-    </section>
+    </div>
   );
 }
