@@ -10,7 +10,7 @@ export default function MudaeNavBar() {
   const { user } = useContext(MudaeContext);
 
   return (
-    <main className="flex flex-col w-full lg:w-[350px]  m-4 pb-3 bg-accent rounded-lg">
+    <main className="flex flex-col w-full lg:w-[350px] m-4 pb-3 bg-accent rounded-lg">
       <section className="flex flex-row w-full items-center justify-center">
         <div className="flex flex-col flex-grow items-center justify-center">
           <h1 className="text-base font-bold  text-center mt-1">
