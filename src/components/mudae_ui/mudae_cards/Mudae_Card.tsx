@@ -192,13 +192,10 @@ export default function MudaeCard({
         };
 
         setKakera(getKakeraAmount());
-
-        // handleEvents(newData as unknown as Character[]);
       });
     }
 
     setImageArray([""]);
-    // setKakeraAmount(await getUserKakeraAmount(fetchedUser));
   };
 
   const handleInputChange = (

@@ -143,6 +143,20 @@ export default function MudaePage(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newCharacter]);
 
+  useEffect(() => {
+    const getKakeraAmount = () => {
+      let kakeraValue = 0;
+
+      for (let i = 0; i < characterDataArray.length; i++) {
+        kakeraValue += characterDataArray[i].kakera;
+      }
+
+      return kakeraValue;
+    };
+
+    setKakera(getKakeraAmount());
+  }, [characterDataArray]);
+
   if (isPending)
     return (
       <div className="flex items-center justify-center">
