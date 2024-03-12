@@ -292,7 +292,7 @@ export default function MudaeCard({
         <CarouselContent>
           {pictureArray.map((picture, index) => (
             <CarouselItem key={index}>
-              <div className="flex w-full h-[280px] max-xs:h-[224px] justify-center border-[1px] border-white rounded">
+              <div className="flex w-full h-[280px] max-xs:h-fit justify-center border-[1px] border-white rounded">
                 <LazyLoadImage
                   src={picture}
                   placeholderSrc={Placeholder}
