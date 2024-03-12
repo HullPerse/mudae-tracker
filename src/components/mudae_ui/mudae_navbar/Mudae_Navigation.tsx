@@ -39,6 +39,7 @@ import { createCharacter } from "@/api/character_api";
 
 export default function MudaeNavigation() {
   const {
+    setUser,
     kakera,
     setFilter,
     setFilterType,
@@ -101,6 +102,12 @@ export default function MudaeNavigation() {
     setPictureArray(values);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setFetchedUser("");
+    setUser(null);
+  };
+
   const handleMudaeAdd = async () => {
     const name = mudaeName.current?.value;
     const series = mudaeSeries.current?.value;
@@ -145,7 +152,7 @@ export default function MudaeNavigation() {
             ))}
           </SelectContent>
         </Select>
-        <Button variant={"destructive"} className="ml-2">
+        <Button variant={"destructive"} className="ml-2" onClick={handleLogout}>
           Выйти
         </Button>
       </div>

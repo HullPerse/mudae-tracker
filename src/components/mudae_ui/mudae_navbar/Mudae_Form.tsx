@@ -5,7 +5,7 @@ import { createUser, loginUser } from "@/api/user_api";
 import { MudaeContext } from "@/components/providers/userProvider";
 
 export default function MudaeForm() {
-  const { setUser } = useContext(MudaeContext);
+  const { setUser, setFetchedUser } = useContext(MudaeContext);
 
   const [login, setLogin] = useState(true);
   const [waiting, setWaiting] = useState(false);
@@ -28,15 +28,15 @@ export default function MudaeForm() {
     if (login) {
       await loginUser(username, password).then(() => {
         localStorage.setItem("user", username);
-        setUser(username);
+        setUser(username.toLowerCase());
+        setFetchedUser(username.toLowerCase());
       });
     } else {
       await createUser(username, password).then(async () => {
         await loginUser(username, password).then(() => {
           localStorage.setItem("user", username);
-          setUser(username);
-
-          window.location.reload();
+          setUser(username.toLowerCase());
+          setFetchedUser(username.toLowerCase());
         });
       });
     }
