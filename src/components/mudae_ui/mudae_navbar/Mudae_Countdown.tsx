@@ -74,10 +74,10 @@ export default function MudaeCountdown() {
         remainingMilliseconds / (1000 * 60 * 60)
       );
       const remainingMinutes = Math.floor(
-        (remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+        (remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60) - 2
       );
       const remainingSeconds = Math.floor(
-        (remainingMilliseconds % (1000 * 60)) / 1000
+        (remainingMilliseconds % (1000 * 60)) / 1000 - 1
       );
 
       setResetTime({
