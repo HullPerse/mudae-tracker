@@ -33,7 +33,7 @@ import { ModeToggle } from "@/components/mudae_ui/mudae_navbar/ThemeToggle";
 import { useContext, useRef, useState } from "react";
 import { MudaeContext } from "@/components/providers/userProvider";
 
-import KakeraIcon from "@/assets/kakera.webp";
+import KakeraIcon from "@/assets/KakeraBlue.webp";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { createCharacter } from "@/api/character_api";
 

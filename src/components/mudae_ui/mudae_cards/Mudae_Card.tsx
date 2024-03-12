@@ -34,7 +34,14 @@ import {
   updateStatus,
 } from "@/api/character_api";
 
-import KakeraIcon from "@/assets/kakera.webp";
+import KakeraBlue from "@/assets/KakeraBlue.webp";
+import KakeraTeal from "@/assets/KakeraTeal.webp";
+import KakeraGreen from "@/assets/KakeraGreen.webp";
+import KakeraYellow from "@/assets/KakeraYellow.webp";
+import KakeraRed from "@/assets/KakeraRed.webp";
+import KakeraOrange from "@/assets/KakeraOrange.webp";
+import KakeraWhite from "@/assets/KakeraWhite.webp";
+
 import Placeholder from "@/assets/placeholder.png";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
@@ -240,6 +247,36 @@ export default function MudaeCard({
     setPictureArray(pictureStringArray);
   }, [currentStatus, picture]);
 
+  const getKakeraIcon = () => {
+    if (name == "Vito Corleone") {
+      return KakeraWhite as string;
+    }
+
+    if (kakera >= 0 && kakera < 151) {
+      return KakeraBlue as string;
+    }
+
+    if (kakera >= 151 && kakera < 251) {
+      return KakeraTeal as string;
+    }
+
+    if (kakera >= 251 && kakera < 401) {
+      return KakeraGreen as string;
+    }
+
+    if (kakera >= 401 && kakera < 601) {
+      return KakeraYellow as string;
+    }
+
+    if (kakera >= 601 && kakera < 801) {
+      return KakeraOrange as string;
+    }
+
+    if (kakera >= 801) {
+      return KakeraRed as string;
+    }
+  };
+
   return (
     <div className="flex flex-col min-w-[200px] max-w-[200px] min-h-[550px] max-h-[550px] p-2 min-w-30 bg-accent border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40">
       <div className="inline-flex justify-between z-50">
@@ -275,7 +312,7 @@ export default function MudaeCard({
         <div className="inline-flex">
           <p className="font-bold">{kakera}</p>
           <img
-            src={KakeraIcon}
+            src={getKakeraIcon()}
             height={20}
             width={20}
             className="pb-1"
