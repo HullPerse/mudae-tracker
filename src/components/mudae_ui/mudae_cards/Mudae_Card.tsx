@@ -278,7 +278,10 @@ export default function MudaeCard({
   };
 
   return (
-    <div className="flex flex-col min-w-[200px] max-w-[200px] min-h-[550px] max-h-[550px] p-2 min-w-30 bg-accent border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40">
+    <div
+      className="flex flex-col max-xs:min-w-[190px] max-xs:max-w-[190px] min-w-[200px] max-w-[200px] min-h-[550px] max-h-[550px] p-2 min-w-30 bg-accent border-black/70 shadow-lg border-2 rounded-md drop-shadow-xl shadow-black/40
+    "
+    >
       <div className="inline-flex justify-between z-50">
         <p className="font-extralight text-accent-foreground h-[25px] w-[25px]">
           {index + 1}.
@@ -289,7 +292,7 @@ export default function MudaeCard({
         <CarouselContent>
           {pictureArray.map((picture, index) => (
             <CarouselItem key={index}>
-              <div className="flex w-full h-[280px] justify-center border-[1px] border-white rounded">
+              <div className="flex w-full h-[280px] max-xs:h-[263px] justify-center border-[1px] border-white rounded">
                 <LazyLoadImage
                   src={picture}
                   placeholderSrc={Placeholder}

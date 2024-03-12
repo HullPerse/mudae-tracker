@@ -155,6 +155,7 @@ export default function MudaePage(): JSX.Element {
     };
 
     setKakera(getKakeraAmount());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [characterDataArray]);
 
   if (isPending)
