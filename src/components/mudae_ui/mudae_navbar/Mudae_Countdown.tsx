@@ -61,18 +61,6 @@ export default function MudaeCountdown() {
       let remainingMinutes = 59 - resetTime.minutes;
       let remainingSeconds = 59 - resetTime.seconds;
 
-      if (remainingHours < 0) {
-        remainingHours = 23;
-      }
-
-      if (remainingMinutes < 0) {
-        remainingMinutes = 59;
-      }
-
-      if (remainingSeconds < 0) {
-        remainingSeconds = 59;
-      }
-
       for (let i = 0; i < targetHours.length; i++) {
         if (currentHour < targetHours[i]) {
           targetIndex = i;
@@ -85,6 +73,18 @@ export default function MudaeCountdown() {
       remainingHours = targetHour - currentHour - 1;
       remainingMinutes = 59 - currentMinutes - 2;
       remainingSeconds = 59 - currentSeconds;
+
+      if (remainingHours < 0) {
+        remainingHours = 23;
+      }
+
+      if (remainingMinutes < 0) {
+        remainingMinutes = 59;
+      }
+
+      if (remainingSeconds < 0) {
+        remainingSeconds = 59;
+      }
 
       setResetTime({
         hours: remainingHours,
