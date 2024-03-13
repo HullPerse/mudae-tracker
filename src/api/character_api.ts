@@ -3,15 +3,26 @@ import PocketBase from "pocketbase";
 const pb = new PocketBase(import.meta.env.VITE_POCKETBASE_API);
 
 export const getCharacterData = async (fetchUser: string) => {
-  const characters = await pb
-    .collection("mudae_collection")
-    .getFullList({
-      fields: "id,name,series,kakera,picture,status",
-      filter: `owner = "${fetchUser}"`,
-    })
-    .then(res => res);
+  if (fetchUser === "allCharactersTable") {
+    const characters = await pb
+      .collection("mudae_collection")
+      .getFullList({
+        fields: "id,name,series,kakera,owner,picture,status",
+      })
+      .then(res => res);
 
-  return characters;
+    return characters;
+  } else {
+    const characters = await pb
+      .collection("mudae_collection")
+      .getFullList({
+        fields: "id,name,series,kakera,picture,status",
+        filter: `owner = "${fetchUser}"`,
+      })
+      .then(res => res);
+
+    return characters;
+  }
 };
 
 export const updateStatus = async (id: string, status: string) => {

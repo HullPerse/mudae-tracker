@@ -4,6 +4,7 @@ import { getCharacterData } from "@/api/character_api";
 import { MudaeContext } from "@/components/providers/userProvider";
 import { useQuery } from "@tanstack/react-query";
 import { Oval } from "react-loader-spinner";
+import MudaeTable from "../Mudae_Table/Mudae_Table";
 
 const MudaeCard = lazy(
   () => import("@/components/mudae_ui/mudae_cards/Mudae_Card")
@@ -11,6 +12,7 @@ const MudaeCard = lazy(
 
 interface Character {
   id: string;
+  owner?: string;
   name: string;
   kakera: number;
   picture: string;
@@ -178,17 +180,26 @@ export default function MudaePage(): JSX.Element {
     return <div>Произошла ошибка при загрузке данных: {error.message}</div>;
   }
 
-  return (
-    <div className="flex flex-row flex-wrap items-center justify-center p-2 gap-5">
-      {characterDataArray.map((item, index) => (
-        <MudaeCard
-          {...item}
-          key={item.id}
-          index={index}
-          getEvents={characterDataArray}
-          handleEvents={setCharacterDataArray}
-        />
-      ))}
-    </div>
-  );
+  if (fetchedUser == "allCharactersTable") {
+    return <MudaeTable dataArray={characterDataArray} />;
+  } else {
+    return (
+      <div className="flex flex-row flex-wrap items-center justify-center p-2 gap-5">
+        {characterDataArray.map((item, index) => (
+          <MudaeCard
+            id={item.id}
+            name={item.name}
+            series={item.series}
+            kakera={item.kakera}
+            picture={item.picture}
+            status={item.status}
+            key={item.id}
+            index={index}
+            getEvents={characterDataArray}
+            handleEvents={setCharacterDataArray}
+          />
+        ))}
+      </div>
+    );
+  }
 }

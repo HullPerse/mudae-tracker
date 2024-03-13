@@ -1,3 +1,4 @@
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +31,6 @@ import { getUserList } from "@/api/user_api";
 
 import { Oval } from "react-loader-spinner";
 import { ModeToggle } from "@/components/mudae_ui/mudae_navbar/ThemeToggle";
-import { useContext, useEffect, useRef, useState } from "react";
 import { MudaeContext } from "@/components/providers/userProvider";
 
 import KakeraIcon from "@/assets/KakeraBlue.webp";
@@ -140,7 +140,7 @@ export default function MudaeNavigation() {
         series,
         Number(kakera),
         JSON.parse(JSON.stringify(pictureArray))
-      ).then(data => {
+      ).then(async data => {
         const newData = {
           id: data.id,
           name: data.name,
@@ -170,6 +170,7 @@ export default function MudaeNavigation() {
                 {user.username.toUpperCase()}
               </SelectItem>
             ))}
+            <SelectItem value="allCharactersTable">Все персонажи</SelectItem>
           </SelectContent>
         </Select>
         <Button variant={"destructive"} className="ml-2" onClick={handleLogout}>
