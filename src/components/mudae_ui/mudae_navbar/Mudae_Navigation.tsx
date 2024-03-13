@@ -311,6 +311,7 @@ export default function MudaeNavigation() {
                     className="bg-green-500/50 hover:bg-green-500 text-white"
                     onClick={() => {
                       handleMudaeAdd();
+                      setAlertOpen(false);
                     }}
                     disabled={disabledCheck}
                   >
