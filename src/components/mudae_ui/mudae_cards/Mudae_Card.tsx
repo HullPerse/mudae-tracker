@@ -415,8 +415,8 @@ export default function MudaeCard({
                     <Input
                       key={index}
                       type="text"
-                      placeholder={value}
-                      value={pictureArray[index]}
+                      defaultValue={value}
+                      placeholder={pictureArray[index]}
                       className="w-full"
                       onChange={event => handleInputChange(event, index)}
                     />

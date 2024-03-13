@@ -26,11 +26,11 @@ export default function MudaeCountdown() {
 
       if (remainingSeconds < 0) {
         remainingMinutes -= 1;
-        remainingSeconds = 59 + remainingSeconds;
+        remainingSeconds = 59;
       }
 
       if (remainingMinutes < 0) {
-        remainingMinutes = 57;
+        remainingMinutes = 59;
       }
 
       setTime({
@@ -47,38 +47,44 @@ export default function MudaeCountdown() {
       const moscowTime = new Date().toLocaleString("en-US", {
         timeZone: "Europe/Moscow",
       });
-      const currentTime = new Date(moscowTime);
-      const currentHour = currentTime.getHours();
 
       const targetHours = [1, 5, 9, 13, 17, 21];
 
-      let nextTargetIndex = 0;
+      let targetIndex = 0;
+
+      const currentTime = new Date(moscowTime);
+      const currentHour = currentTime.getHours();
+      const currentMinutes = currentTime.getMinutes();
+      const currentSeconds = currentTime.getSeconds();
+
+      let remainingHours = 23 - resetTime.hours;
+      let remainingMinutes = 59 - resetTime.minutes;
+      let remainingSeconds = 59 - resetTime.seconds;
+
+      if (remainingHours < 0) {
+        remainingHours = 23;
+      }
+
+      if (remainingMinutes < 0) {
+        remainingMinutes = 59;
+      }
+
+      if (remainingSeconds < 0) {
+        remainingSeconds = 59;
+      }
+
       for (let i = 0; i < targetHours.length; i++) {
         if (currentHour < targetHours[i]) {
-          nextTargetIndex = i;
+          targetIndex = i;
           break;
         }
       }
 
-      const targetHour = targetHours[nextTargetIndex];
-      const targetTime = new Date(currentTime);
-      targetTime.setHours(targetHour, 0, 0, 0);
+      const targetHour = targetHours[targetIndex];
 
-      let remainingMilliseconds = targetTime.getTime() - currentTime.getTime();
-      if (remainingMilliseconds < 0) {
-        targetTime.setDate(targetTime.getDate() + 1);
-        remainingMilliseconds = targetTime.getTime() - currentTime.getTime();
-      }
-
-      const remainingHours = Math.floor(
-        remainingMilliseconds / (1000 * 60 * 60)
-      );
-      const remainingMinutes = Math.floor(
-        (remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60) - 2
-      );
-      const remainingSeconds = Math.floor(
-        (remainingMilliseconds % (1000 * 60)) / 1000 - 1
-      );
+      remainingHours = targetHour - currentHour - 1;
+      remainingMinutes = 59 - currentMinutes - 2;
+      remainingSeconds = 59 - currentSeconds;
 
       setResetTime({
         hours: remainingHours,
