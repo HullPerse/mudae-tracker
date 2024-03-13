@@ -30,7 +30,7 @@ import { getUserList } from "@/api/user_api";
 
 import { Oval } from "react-loader-spinner";
 import { ModeToggle } from "@/components/mudae_ui/mudae_navbar/ThemeToggle";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { MudaeContext } from "@/components/providers/userProvider";
 
 import KakeraIcon from "@/assets/KakeraBlue.webp";
@@ -51,6 +51,9 @@ export default function MudaeNavigation() {
 
   const [pictureArray, setPictureArray] = useState<string[]>([""]);
 
+  const [disabledCheck, setDisabledCheck] = useState(true);
+  const [alertOpen, setAlertOpen] = useState(false);
+
   const mudaeFilterText = useRef<HTMLInputElement>(null);
 
   const mudaeName = useRef<HTMLInputElement>(null);
@@ -61,6 +64,23 @@ export default function MudaeNavigation() {
     queryKey: ["userList"],
     queryFn: getUserList,
   });
+
+  useEffect(() => {
+    const name = mudaeName.current?.value;
+    const series = mudaeSeries.current?.value;
+    const kakera = mudaeKakera.current?.value;
+
+    const isDisabled =
+      !name ||
+      !series ||
+      !kakera ||
+      name.length <= 0 ||
+      series.length <= 0 ||
+      kakera.length <= 0 ||
+      !pictureArray[0];
+
+    setDisabledCheck(isDisabled);
+  }, [mudaeName, mudaeSeries, mudaeKakera, pictureArray]);
 
   if (isPending)
     return (
@@ -206,10 +226,21 @@ export default function MudaeNavigation() {
           <MudaeCountdown />
         </div>
 
-        <div className="flex flex-col justify-center gap-y-2 pt-2">
+        <div
+          className="flex flex-col justify-center gap-y-2 pt-2"
+          onKeyDown={event => {
+            if (event.key === "Enter") {
+              handleMudaeAdd();
+              setAlertOpen(false);
+            }
+          }}
+        >
           {fetchedUser == localStorage.getItem("user") && (
-            <AlertDialog>
-              <AlertDialogTrigger className="flex items-center justify-center w-full py-1 rounded-md border border-input bg-white/10 hover:bg-white/15">
+            <AlertDialog open={alertOpen}>
+              <AlertDialogTrigger
+                className="flex items-center justify-center w-full py-1 rounded-md border border-input bg-white/10 hover:bg-white/15"
+                onClick={() => setAlertOpen(true)}
+              >
                 <PlusIcon />
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -269,7 +300,10 @@ export default function MudaeNavigation() {
                 <AlertDialogFooter>
                   <AlertDialogCancel
                     className="bg-red-500/50 hover:bg-red-500"
-                    onClick={() => setPictureArray([""])}
+                    onClick={() => {
+                      setPictureArray([""]);
+                      setAlertOpen(false);
+                    }}
                   >
                     Отменить
                   </AlertDialogCancel>
@@ -278,6 +312,7 @@ export default function MudaeNavigation() {
                     onClick={() => {
                       handleMudaeAdd();
                     }}
+                    disabled={disabledCheck}
                   >
                     Добавить
                   </AlertDialogAction>

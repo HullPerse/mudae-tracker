@@ -442,7 +442,9 @@ export default function MudaeCard({
                 </Button>
               </AlertDialogDescription>
               <AlertDialogFooter>
-                <AlertDialogCancel>Отмена</AlertDialogCancel>
+                <AlertDialogCancel className="bg-red-500/50 hover:bg-red-500">
+                  Отмена
+                </AlertDialogCancel>
                 <AlertDialogAction
                   className="bg-green-500/50 hover:bg-green-500 text-white"
                   onClick={() => handleMudaeUpdate(id)}
