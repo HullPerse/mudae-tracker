@@ -16,7 +16,7 @@ export const getCharacterData = async (fetchUser: string) => {
     const characters = await pb
       .collection("mudae_collection")
       .getFullList({
-        fields: "id,name,series,kakera,picture,status",
+        fields: "id,name,series,kakera,owner,picture,status",
         filter: `owner = "${fetchUser}"`,
       })
       .then(res => res);

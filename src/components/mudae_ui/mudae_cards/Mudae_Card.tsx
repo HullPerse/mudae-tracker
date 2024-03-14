@@ -90,7 +90,7 @@ export default function MudaeCard({
 
   const [currentStatus, setCurrentStatus] = useState(status);
   const [currentColor, setCurrentColor] = useState(
-    status ? STATUS[status as keyof typeof STATUS].color : "#006600"
+    STATUS[status as keyof typeof STATUS].color
   );
 
   const mudaeName = useRef<HTMLInputElement>(null);
@@ -230,9 +230,7 @@ export default function MudaeCard({
   };
 
   useEffect(() => {
-    setCurrentColor(
-      status ? STATUS[status as keyof typeof STATUS].color : "#006600"
-    );
+    setCurrentColor(STATUS[currentStatus as keyof typeof STATUS].color);
 
     const pictureString = JSON.stringify(picture);
     const pictureStringArray: string[] = [];
@@ -335,11 +333,7 @@ export default function MudaeCard({
               style={{ backgroundColor: currentColor }}
             >
               <SelectValue
-                placeholder={
-                  status
-                    ? STATUS[status as keyof typeof STATUS].name
-                    : "MUDAE_KEEP"
-                }
+                placeholder={STATUS[status as keyof typeof STATUS].name}
                 defaultValue={status}
               />
             </SelectTrigger>
