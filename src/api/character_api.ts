@@ -88,5 +88,5 @@ export type Character = {
   kakera: number;
   picture: string;
   status: string;
-  created: string;
+  created?: string;
 };

@@ -59,6 +59,7 @@ interface Character {
   picture: string;
   series: string;
   status: string;
+  created?: string;
 }
 
 export default function MudaeCard({

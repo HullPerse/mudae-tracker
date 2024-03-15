@@ -17,6 +17,7 @@ interface Character {
   picture: string;
   series: string;
   status: string;
+  created?: string;
 }
 
 type FilterPosition = "asc" | "desc";
