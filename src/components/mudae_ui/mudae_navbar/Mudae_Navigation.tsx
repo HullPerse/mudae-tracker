@@ -159,6 +159,8 @@ export default function MudaeNavigation() {
           kakera: data.kakera,
           picture: data.picture,
           status: data.status,
+          owner: data.owner,
+          created: data.created,
         };
 
         setNewCharacter([newData]);
@@ -254,6 +256,93 @@ export default function MudaeNavigation() {
           }}
         >
           {fetchedUser == localStorage.getItem("user") && (
+            <AlertDialog open={alertOpen}>
+              <AlertDialogTrigger
+                className="flex items-center justify-center w-full py-1 rounded-md border border-input bg-white/10 hover:bg-white/15"
+                onClick={() => setAlertOpen(true)}
+              >
+                <PlusIcon />
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Введите информацию о персонаже
+                  </AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogDescription className="flex flex-col gap-2 font-bold overflow-y-auto">
+                  <Input
+                    type="text"
+                    placeholder="Имя персонажа"
+                    ref={mudaeName}
+                  />
+                  <Input type="text" placeholder="Тайтл" ref={mudaeSeries} />
+                  <Input
+                    type="number"
+                    placeholder="Какера"
+                    min={0}
+                    max={9999}
+                    ref={mudaeKakera}
+                  />
+
+                  {pictureArray.map((value, index) => (
+                    <span key={index} className="inline-flex">
+                      <Input
+                        key={index}
+                        value={value}
+                        type="text"
+                        placeholder={`${
+                          index == 0 ? "★" : ""
+                        } Ссылка на картинку`}
+                        className="w-full"
+                        onChange={event => handleInputChange(index, event)}
+                      />
+                      {index > 0 && (
+                        <span
+                          className="flex items-center justify-center w-[40px] h-[40px] ml-1 bg-red-500/50 hover:bg-red-500 rounded font-bold hover:cursor-pointer"
+                          onClick={() => removeInputField(index)}
+                        >
+                          <TrashIcon
+                            color="white"
+                            className="text-white pointer-events-none"
+                          />
+                        </span>
+                      )}
+                    </span>
+                  ))}
+                  <Button
+                    variant="outline"
+                    onClick={() => addInputField()}
+                    disabled={pictureArray.length >= 5}
+                  >
+                    Добавить картинку
+                  </Button>
+                </AlertDialogDescription>
+                <AlertDialogFooter>
+                  <AlertDialogCancel
+                    className="bg-red-500/50 hover:bg-red-500"
+                    onClick={() => {
+                      setPictureArray([""]);
+                      setAlertOpen(false);
+                    }}
+                  >
+                    Отменить
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-green-500/50 hover:bg-green-500 text-white"
+                    onClick={() => {
+                      handleMudaeAdd();
+                      setAlertOpen(false);
+                    }}
+                    disabled={disabledCheck}
+                  >
+                    Добавить
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+
+          {fetchedUser == "allCharactersTable" && (
             <AlertDialog open={alertOpen}>
               <AlertDialogTrigger
                 className="flex items-center justify-center w-full py-1 rounded-md border border-input bg-white/10 hover:bg-white/15"
