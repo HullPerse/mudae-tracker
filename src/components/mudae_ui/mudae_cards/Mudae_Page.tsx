@@ -1,5 +1,4 @@
 import { lazy, useContext, useEffect, useState } from "react";
-
 import { getCharacterData } from "@/api/character_api";
 import { MudaeContext } from "@/components/providers/userProvider";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +21,7 @@ interface Character {
 
 type FilterPosition = "asc" | "desc";
 
-export default function MudaePage(): JSX.Element {
+export default function MudaePage() {
   const {
     fetchedUser,
     filter,
@@ -41,6 +40,23 @@ export default function MudaePage(): JSX.Element {
     },
   });
 
+  useEffect(() => {
+    if (data) {
+      setCharacterDataArray(data as unknown as Character[]);
+      setKakera(getKakeraAmount(data as unknown as Character[]));
+    }
+  }, [data, setKakera]);
+
+  useEffect(() => {
+    filterDataFetch(filter, filterType, filterPosition);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, filterType, filterPosition]);
+
+  useEffect(() => {
+    setCharacterDataArray([...characterDataArray, ...newCharacter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newCharacter]);
+
   const filterDataFetch = (
     filter: string,
     filterType: string,
@@ -55,110 +71,66 @@ export default function MudaePage(): JSX.Element {
 
       if (filterType === "created") {
         if (filterPosition === "asc") {
-          return setCharacterDataArray(filteredData);
+          setCharacterDataArray(filteredData);
         } else {
-          return setCharacterDataArray(filteredData.reverse());
+          setCharacterDataArray(filteredData.reverse());
         }
+      } else {
+        const sortedData = filteredData.sort((a, b) => {
+          let firstValue: string | number | Date;
+          let secondValue: string | number | Date;
+
+          switch (filterType) {
+            case "name":
+              firstValue = a.name.toLowerCase();
+              secondValue = b.name.toLowerCase();
+              break;
+            case "series":
+              firstValue = a.series.toLowerCase();
+              secondValue = b.series.toLowerCase();
+              break;
+            case "kakera":
+              firstValue = a.kakera;
+              secondValue = b.kakera;
+              break;
+            case "status":
+              firstValue = a.status;
+              secondValue = b.status;
+              break;
+            default:
+              firstValue = a.name.toLowerCase();
+              secondValue = b.name.toLowerCase();
+              break;
+          }
+
+          if (filterPosition === "asc") {
+            return firstValue < secondValue
+              ? -1
+              : firstValue > secondValue
+              ? 1
+              : 0;
+          } else if (filterPosition === "desc") {
+            return firstValue > secondValue
+              ? -1
+              : firstValue < secondValue
+              ? 1
+              : 0;
+          }
+          return 0;
+        });
+
+        setCharacterDataArray(sortedData);
       }
-
-      const sortedData = filteredData.sort((a, b) => {
-        let firstValue: string | number | Date;
-        let secondValue: string | number | Date;
-
-        switch (filterType) {
-          case "name":
-            firstValue = a.name.toLowerCase();
-            secondValue = b.name.toLowerCase();
-            break;
-          case "series":
-            firstValue = a.series.toLowerCase();
-            secondValue = b.series.toLowerCase();
-            break;
-          case "kakera":
-            firstValue = a.kakera;
-            secondValue = b.kakera;
-            break;
-
-          case "status":
-            firstValue = a.status;
-            secondValue = b.status;
-            break;
-
-          default:
-            firstValue = a.name.toLowerCase();
-            secondValue = b.name.toLowerCase();
-            break;
-        }
-
-        if (filterPosition === "asc") {
-          if (firstValue < secondValue) {
-            return -1;
-          }
-          if (firstValue > secondValue) {
-            return 1;
-          }
-          return 0;
-        } else if (filterPosition === "desc") {
-          if (firstValue > secondValue) {
-            return -1;
-          }
-          if (firstValue < secondValue) {
-            return 1;
-          }
-          return 0;
-        }
-        return 0;
-      });
-
-      setCharacterDataArray(sortedData);
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      setCharacterDataArray(data as unknown as Character[]);
-
-      filterDataFetch(filter, filterType, filterPosition);
-
-      const getKakeraAmount = () => {
-        let kakeraValue = 0;
-
-        for (let i = 0; i < data.length; i++) {
-          kakeraValue += data[i].kakera;
-        }
-
-        return kakeraValue;
-      };
-
-      setKakera(getKakeraAmount());
+  const getKakeraAmount = (data: Character[]) => {
+    let kakeraValue = 0;
+    for (let i = 0; i < data.length; i++) {
+      kakeraValue += data[i].kakera;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, setKakera, filter, filterType, filterPosition]);
-
-  useEffect(() => {
-    filterDataFetch(filter, filterType, filterPosition);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, filterType]);
-
-  useEffect(() => {
-    setCharacterDataArray([...characterDataArray, ...newCharacter]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newCharacter]);
-
-  useEffect(() => {
-    const getKakeraAmount = () => {
-      let kakeraValue = 0;
-
-      for (let i = 0; i < characterDataArray.length; i++) {
-        kakeraValue += characterDataArray[i].kakera;
-      }
-
-      return kakeraValue;
-    };
-
-    setKakera(getKakeraAmount());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [characterDataArray]);
+    return kakeraValue;
+  };
 
   if (isPending)
     return (
@@ -180,7 +152,7 @@ export default function MudaePage(): JSX.Element {
     return <div>Произошла ошибка при загрузке данных: {error.message}</div>;
   }
 
-  if (fetchedUser == "allCharactersTable") {
+  if (fetchedUser === "allCharactersTable") {
     return <MudaeTable dataArray={characterDataArray} />;
   } else {
     return (

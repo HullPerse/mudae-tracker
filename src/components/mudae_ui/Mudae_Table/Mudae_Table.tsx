@@ -9,6 +9,7 @@ export interface Character {
   picture: string;
   series: string;
   status: string;
+  created?: string;
 }
 export default function MudaeTable({ dataArray }: { dataArray: Character[] }) {
   return (

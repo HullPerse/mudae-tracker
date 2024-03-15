@@ -50,6 +50,7 @@ export default function MudaeNavigation() {
   } = useContext(MudaeContext);
 
   const [pictureArray, setPictureArray] = useState<string[]>([""]);
+  const [selectedValue, setSelectedValue] = useState<string>(fetchedUser);
 
   const [disabledCheck, setDisabledCheck] = useState(true);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -66,21 +67,31 @@ export default function MudaeNavigation() {
   });
 
   useEffect(() => {
-    const name = mudaeName.current?.value;
-    const series = mudaeSeries.current?.value;
-    const kakera = mudaeKakera.current?.value;
+    setSelectedValue(fetchedUser);
+  }, [fetchedUser]);
 
-    const isDisabled =
-      !name ||
-      !series ||
-      !kakera ||
-      name.length <= 0 ||
-      series.length <= 0 ||
-      kakera.length <= 0 ||
-      !pictureArray[0];
+  useEffect(() => {
+    const name = mudaeName.current?.value || "";
+    const series = mudaeSeries.current?.value || "";
+    const kakera = mudaeKakera.current?.value || "";
 
-    setDisabledCheck(isDisabled);
-  }, [mudaeName, mudaeSeries, mudaeKakera, pictureArray]);
+    const handleDisabledButton = () => {
+      const isDisabled =
+        !name ||
+        !series ||
+        !kakera ||
+        pictureArray.length === 0 ||
+        pictureArray[0] === "";
+      setDisabledCheck(isDisabled);
+    };
+
+    handleDisabledButton();
+  }, [
+    mudaeName.current?.value,
+    mudaeSeries.current?.value,
+    mudaeKakera.current?.value,
+    pictureArray,
+  ]);
 
   if (isPending)
     return (
@@ -160,7 +171,13 @@ export default function MudaeNavigation() {
   return (
     <main className="flex flex-col justify-center w-full gap-y-1 px-2 pt-2">
       <div className="inline-flex">
-        <Select onValueChange={setFetchedUser}>
+        <Select
+          onValueChange={e => {
+            setFetchedUser(e);
+            setSelectedValue(e);
+          }}
+          defaultValue={selectedValue}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Выберите пользователя" />
           </SelectTrigger>

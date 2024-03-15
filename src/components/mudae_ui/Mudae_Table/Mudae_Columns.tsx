@@ -5,6 +5,7 @@ import { Character } from "@/components/mudae_ui/Mudae_Table/Mudae_Table";
 import { Button } from "@/components/ui/button";
 
 import { ArrowUpDown } from "lucide-react";
+import { STATUS } from "@/api/status_api";
 
 export const columns: ColumnDef<Character>[] = [
   {
@@ -60,6 +61,37 @@ export const columns: ColumnDef<Character>[] = [
     },
   },
   {
+    accessorKey: "status",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            column.toggleSorting(column.getIsSorted() === "asc");
+          }}
+        >
+          Статус
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({
+      row: {
+        original: { status: value },
+      },
+    }) => (
+      <div
+        style={{
+          color: STATUS[value as keyof typeof STATUS].color,
+          fontWeight: "bold",
+        }}
+      >
+        {STATUS[value as keyof typeof STATUS].name}
+      </div>
+    ),
+  },
+
+  {
     accessorKey: "owner",
     header: ({ column }) => {
       return (
@@ -74,5 +106,31 @@ export const columns: ColumnDef<Character>[] = [
         </Button>
       );
     },
+    cell: ({
+      row: {
+        original: { owner: value },
+      },
+    }) => <div>{value}</div>,
+  },
+  {
+    accessorKey: "created",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            column.toggleSorting(column.getIsSorted() === "asc");
+          }}
+        >
+          Создан
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({
+      row: {
+        original: { created: value },
+      },
+    }) => <div>{value}</div>,
   },
 ];

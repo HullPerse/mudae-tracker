@@ -7,7 +7,7 @@ export const getCharacterData = async (fetchUser: string) => {
     const characters = await pb
       .collection("mudae_collection")
       .getFullList({
-        fields: "id,name,series,kakera,owner,picture,status",
+        fields: "id,name,series,kakera,owner,picture,status,created",
       })
       .then(res => res);
 
@@ -88,4 +88,5 @@ export type Character = {
   kakera: number;
   picture: string;
   status: string;
+  created: string;
 };
