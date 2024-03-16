@@ -131,6 +131,11 @@ export const columns: ColumnDef<Character>[] = [
       row: {
         original: { created: value },
       },
-    }) => <div>{value}</div>,
+    }) => (
+      <div className="flex flex-col justify-center">
+        <span>{value?.split(" ")[0]}</span>
+        <span>{value?.split(" ")[1].split(".")[0]}</span>
+      </div>
+    ),
   },
 ];
