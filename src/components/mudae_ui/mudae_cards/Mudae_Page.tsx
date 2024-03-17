@@ -67,7 +67,8 @@ export default function MudaePage() {
       const filteredData = data.filter(
         item =>
           item.name.toLowerCase().includes(filter.toLowerCase()) ||
-          item.series.toLowerCase().includes(filter.toLowerCase())
+          item.series.toLowerCase().includes(filter.toLowerCase()) ||
+          ""
       ) as unknown as Character[];
 
       if (filterType === "created") {

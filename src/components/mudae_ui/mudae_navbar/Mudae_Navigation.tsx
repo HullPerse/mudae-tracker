@@ -110,7 +110,7 @@ export default function MudaeNavigation() {
 
   if (error) return "Произошла ошибка при загрузке данных: " + error.message;
 
-  const handleInputChange = (
+  const handleInputChange = async (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -205,7 +205,7 @@ export default function MudaeNavigation() {
       <section>
         <Input
           type="text"
-          placeholder="Поиск персонажа"
+          placeholder="Поиск..."
           ref={mudaeFilterText}
           onChange={() => {
             setFilter(mudaeFilterText.current?.value || "");

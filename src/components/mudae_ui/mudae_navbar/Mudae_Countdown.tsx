@@ -48,7 +48,7 @@ export default function MudaeCountdown() {
         timeZone: "Europe/Moscow",
       });
 
-      const targetHours = [1, 5, 9, 13, 17, 21];
+      const targetHours = [1, 5, 9, 13, 17, 21, 25];
 
       let targetIndex = 0;
 
