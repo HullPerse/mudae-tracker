@@ -330,10 +330,9 @@ export default function MudaeCard({
                 fetchedUser === localStorage.getItem("user")
                   ? "w-[80%] max-xs:w-[65%]"
                   : "w-full"
-              } font-bold`}
+              } font-bold dark:text-white text-white`}
               style={{
                 backgroundColor: currentColor,
-                color: currentColor === "white" ? "black" : "white",
               }}
             >
               <SelectValue
