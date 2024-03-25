@@ -331,7 +331,10 @@ export default function MudaeCard({
                   ? "w-[80%] max-xs:w-[65%]"
                   : "w-full"
               } font-bold`}
-              style={{ backgroundColor: currentColor }}
+              style={{
+                backgroundColor: currentColor,
+                color: currentColor === "white" ? "black" : "white",
+              }}
             >
               <SelectValue
                 placeholder={STATUS[status as keyof typeof STATUS].name}
