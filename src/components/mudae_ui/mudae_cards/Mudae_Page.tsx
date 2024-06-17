@@ -1,14 +1,23 @@
-import { lazy, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { getCharacterData } from "@/api/character_api";
 import { MudaeContext } from "@/components/providers/userProvider";
 import { useQuery } from "@tanstack/react-query";
 import { Oval } from "react-loader-spinner";
-import MudaeTable from "../Mudae_Table/Mudae_Table";
+import MudaeTable from "@/components/mudae_ui/Mudae_Table/Mudae_Table";
 
-const MudaeCard = lazy(
-  () => import("@/components/mudae_ui/mudae_cards/Mudae_Card")
-);
+import { ArrowBigDown } from "lucide-react";
 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+import MudaeCard from "@/components/mudae_ui/mudae_cards/Mudae_Card";
+import { Button } from "@/components/ui/button";
 interface Character {
   id: string;
   owner?: string;
@@ -33,6 +42,10 @@ export default function MudaePage() {
   } = useContext(MudaeContext);
 
   const [characterDataArray, setCharacterDataArray] = useState<Character[]>([]);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [charactersPerPage] = useState(50);
 
   const { data, isPending, error } = useQuery({
     queryKey: ["characterData", fetchedUser],
@@ -134,6 +147,29 @@ export default function MudaePage() {
     return kakeraValue;
   };
 
+  const scrollToBottom = () => {
+    const element = cardsContainerRef.current;
+    if (element) {
+      const maxPosition = document.body.offsetHeight - window.innerHeight;
+      const currentPosition = window.scrollY;
+      element?.scrollIntoView({
+        behavior: "smooth",
+        block: currentPosition + 100 < maxPosition ? "end" : "start",
+      });
+    }
+  };
+
+  // Get current characters
+  const indexOfLastCharacter = currentPage * charactersPerPage;
+  const indexOfFirstCharacter = indexOfLastCharacter - charactersPerPage;
+  const currentCharacters = characterDataArray.slice(
+    indexOfFirstCharacter,
+    indexOfLastCharacter
+  );
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   if (isPending)
     return (
       <div className="flex items-center justify-center">
@@ -158,22 +194,77 @@ export default function MudaePage() {
     return <MudaeTable dataArray={characterDataArray} />;
   } else {
     return (
-      <div className="flex flex-row flex-wrap items-center justify-center p-2 gap-5">
-        {characterDataArray.map((item, index) => (
-          <MudaeCard
-            id={item.id}
-            name={item.name}
-            series={item.series}
-            kakera={item.kakera}
-            picture={item.picture}
-            status={item.status}
-            key={item.id}
-            index={index}
-            getEvents={characterDataArray}
-            handleEvents={setCharacterDataArray}
-          />
-        ))}
-      </div>
+      <section className="flex w-full">
+        <div className="flex flex-col w-full">
+          <div
+            id="cards"
+            ref={cardsContainerRef} // Attach ref to the cards container
+            className="flex flex-row flex-wrap items-center justify-center p-2 gap-5"
+          >
+            {currentCharacters.map((item, index) => (
+              <MudaeCard
+                id={item.id}
+                name={item.name}
+                series={item.series}
+                kakera={item.kakera}
+                picture={item.picture}
+                status={item.status}
+                key={item.id}
+                index={index}
+                getEvents={characterDataArray}
+                handleEvents={setCharacterDataArray} // Ensure setCharacterDataArray is defined elsewhere
+              />
+            ))}
+          </div>
+          <div className="fixed right-0 bottom-0 m-4">
+            <div
+              className="flex items-center justify-center bg-white/10 w-14 h-14 rounded-full hover:cursor-pointer hover:bg-white/50"
+              onClick={scrollToBottom} // Attach scrollToBottom function to onClick event
+            >
+              <ArrowBigDown className="pointer-events-none" size={40} />
+            </div>
+          </div>
+          <div>
+            <Pagination>
+              <PaginationPrevious
+                isActive={currentPage !== 1}
+                className="mx-2 hover:cursor-pointer"
+              >
+                <Button
+                  disabled={currentPage === 1}
+                  onClick={() => paginate(currentPage - 1)}
+                >
+                  ←
+                </Button>
+              </PaginationPrevious>
+              <PaginationContent>
+                {[
+                  ...Array(
+                    Math.ceil(characterDataArray.length / charactersPerPage)
+                  ).keys(),
+                ].map(number => (
+                  <PaginationItem key={number + 1}>
+                    <PaginationLink
+                      isActive={currentPage === number + 1}
+                      onClick={() => paginate(number + 1)}
+                      className="hover:cursor-pointer"
+                    >
+                      {number + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+              </PaginationContent>
+              <PaginationNext
+                isActive={
+                  currentPage ===
+                  Math.ceil(characterDataArray.length / charactersPerPage)
+                }
+                className="mx-2 hover:cursor-pointer"
+              ></PaginationNext>
+            </Pagination>
+          </div>
+        </div>
+      </section>
     );
   }
 }

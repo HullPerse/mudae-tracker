@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import MudaeCountdown from "./Mudae_Countdown";
+// import MudaeCountdown from "./Mudae_Countdown";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -247,9 +247,9 @@ export default function MudaeNavigation() {
           </div>
         </section>
 
-        <div className="mt-4 py-2 border-[1px] border-white/20 rounded-md">
+        {/* <div className="mt-4 py-2 border-[1px] border-white/20 rounded-md">
           <MudaeCountdown />
-        </div>
+        </div> */}
 
         <div
           className="flex flex-col justify-center gap-y-2 pt-2"
