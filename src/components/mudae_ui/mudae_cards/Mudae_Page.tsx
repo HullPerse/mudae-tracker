@@ -196,6 +196,45 @@ export default function MudaePage() {
     return (
       <section className="flex w-full">
         <div className="flex flex-col w-full">
+          <div>
+            <Pagination>
+              <PaginationPrevious
+                isActive={currentPage !== 1}
+                className="mx-2 hover:cursor-pointer"
+              >
+                <Button
+                  disabled={currentPage === 1}
+                  onClick={() => paginate(currentPage - 1)}
+                >
+                  ←
+                </Button>
+              </PaginationPrevious>
+              <PaginationContent>
+                {[
+                  ...Array(
+                    Math.ceil(characterDataArray.length / charactersPerPage)
+                  ).keys(),
+                ].map(number => (
+                  <PaginationItem key={number + 1}>
+                    <PaginationLink
+                      isActive={currentPage === number + 1}
+                      onClick={() => paginate(number + 1)}
+                      className="hover:cursor-pointer"
+                    >
+                      {number + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+              </PaginationContent>
+              <PaginationNext
+                isActive={
+                  currentPage ===
+                  Math.ceil(characterDataArray.length / charactersPerPage)
+                }
+                className="mx-2 hover:cursor-pointer"
+              ></PaginationNext>
+            </Pagination>
+          </div>
           <div
             id="cards"
             ref={cardsContainerRef} // Attach ref to the cards container
