@@ -1,4 +1,6 @@
 # MUDAE-TRACKER
+
+## IM AWARE OF PAGINATION ISSUES, BUT SINCE I DONT USE THAT BOT ANYMORE I MIGHT NEVER FIX IT
 Small web app written for local discord server with muedae bot
 
 if you REALLY want to use it:
